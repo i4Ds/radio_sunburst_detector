@@ -1,0 +1,3 @@
+ecallisto_ng
+matplotlib
+openpyxl
