@@ -19,7 +19,11 @@ def main(config_name):
 
     # Send config to wandb
     config = load_config(os.path.join("model_base_configs", config_name + ".yaml"))
-    wandb.init(project="radio_sunburst_detection", config=config)
+    wandb.init(
+        project="radio_sunburst_detection",
+        config=config,
+        entity="i4ds_radio_sunburst_detection",
+    )
     del config
 
     train_ds, validation_ds, test_ds = get_datasets()
