@@ -1,5 +1,5 @@
 # config.yaml
-program: train.py
+program: main.py
 project: Automated radio wave spectrogram classifier
 entity: FHNW
 method: bayes
