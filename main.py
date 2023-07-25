@@ -28,18 +28,7 @@ def main(config_name):
 
     train_ds, validation_ds, test_ds = get_datasets()
     # Log number of images in training and validation datasets
-    wandb.log(
-        {
-            "N Train Images (rounded up by batch size)": len(train_ds)
-            * wandb.config["training_params"]["batch_size"]
-        }
-    )
-    wandb.log(
-        {
-            "N Val Images (rounded up by batch size)": len(validation_ds)
-            * wandb.config["training_params"]["batch_size"]
-        }
-    )
+    # TODO: Log number of images in test dataset
 
     # Build and train the model
     mb = ModelBuilder(model_params=wandb.config["model_params"])
