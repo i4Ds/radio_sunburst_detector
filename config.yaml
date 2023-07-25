@@ -1,0 +1,47 @@
+# config.yaml
+program: train.py
+project: Automated radio wave spectrogram classifier
+entity: FHNW
+method: bayes
+name: sweep
+metric:
+  goal: maximize
+  name: val_acc
+parameters:
+  encoder_filters:
+    values: [32, 64, 96, 128]
+  encoder_kernel_size: 
+    values: [3, 5]
+  encoder_l1:
+    min: 0.00001
+    max: 0.01
+  weight_initialization:
+    values: ['glorot_uniform', 'he_normal']
+  units:
+    min: 32
+    max: 512
+  dropout:
+    min: 0.0
+    max: 0.5
+  optimizer:
+    values: ['adam', 'sgd', 'rmsprop']
+  activation:
+    values: ['sigmoid', 'softmax']
+  batch_size: 
+    min: 32
+    max: 512
+  learning_rate:
+    min: 0.0001
+    max: 0.1
+  epochs:
+    values: [10, 15, 20]
+  num_maxpool:
+    values: [3, 4, 5, 6]
+  before_encoder_loop:
+    values: [0, 1, 2]
+  num_loops:
+    values: [1, 2, 3]
+  neurons_after_flatten:
+    values: [128, 256, 512, 1024, 2048]
+
+  
