@@ -11,7 +11,6 @@ import numpy as np
 import os
 from PIL import Image
 import matplotlib.pyplot as plt
-from data_preparation_utils import get_imgs_directory, resize_and_save_img_in_directory, get_datasets, get_img_num
 import wandb
 from wandb.keras import WandbCallback
 
