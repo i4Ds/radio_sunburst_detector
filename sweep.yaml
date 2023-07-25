@@ -1,12 +1,10 @@
-# config.yaml
-program: main.py
-project: Automated radio wave spectrogram classifier
-entity: FHNW
+#https://docs.wandb.ai/guides/sweeps/quickstart
+program: sweep.py
 method: bayes
-name: sweep
+project: radio_sunburst_detection
 metric:
   goal: maximize
-  name: val_acc
+  name: val_recall
 parameters:
   encoder_filters:
     values: [32, 64, 96, 128]
@@ -17,29 +15,26 @@ parameters:
     max: 0.01
   weight_initialization:
     values: ['glorot_uniform', 'he_normal']
-  units:
-    min: 32
-    max: 512
   dropout:
     min: 0.0
     max: 0.5
   optimizer:
     values: ['adam', 'sgd', 'rmsprop']
-  activation:
-    values: ['sigmoid', 'softmax']
   batch_size: 
     min: 32
     max: 512
   learning_rate:
     min: 0.0001
     max: 0.1
-  epochs:
-    values: [10, 15, 20]
-  before_encoder_loop:
-    values: [0, 1, 2]
   num_dense_layers:
     values: [1, 2, 3]
   neurons_dense_layer:
     values: [64, 32, 16]
 
-  
+
+
+command:
+  - ${interpreter}
+  - ${program}
+  - "--config_name"
+  - "sweep" #Insert your model here (do not push it, adapt it each time.)

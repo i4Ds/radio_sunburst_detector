@@ -1,0 +1,15 @@
+model_params:
+  input_shape: [256, 256, 1]
+  encoder_filters: 64
+  encoder_kernel_size: 3
+  encoder_l1: 0.00001
+  weight_initialization: 'he_normal'
+  num_hidden_layers: 2
+  dropout: 0.1
+  optimizer: 'adam'
+  learning_rate: 0.001
+  num_dense_layers: 2
+  neurons_dense_layer: 64
+training_params:
+  epochs: 5
+  batch_size: 64
