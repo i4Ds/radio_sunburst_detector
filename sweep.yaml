@@ -1,28 +1,23 @@
 #https://docs.wandb.ai/guides/sweeps/quickstart
+# Run it as follows: wandb sweep sweep.yaml
 program: sweep.py
 method: bayes
 project: radio_sunburst_detection
+entity: i4ds_radio_sunburst_detection
 metric:
   goal: maximize
-  name: val_recall
+  name: recall
 parameters:
   encoder_filters:
-    values: [32, 64, 96, 128]
+    values: [3, 6, 9]
   encoder_kernel_size: 
     values: [3, 5]
   encoder_l1:
     min: 0.00001
     max: 0.01
-  weight_initialization:
-    values: ['glorot_uniform', 'he_normal']
   dropout:
     min: 0.0
     max: 0.5
-  optimizer:
-    values: ['adam', 'sgd', 'rmsprop']
-  batch_size: 
-    min: 32
-    max: 512
   learning_rate:
     min: 0.0001
     max: 0.1
@@ -31,10 +26,8 @@ parameters:
   neurons_dense_layer:
     values: [64, 32, 16]
 
-
-
 command:
   - ${interpreter}
   - ${program}
   - "--config_name"
-  - "sweep" #Insert your model here (do not push it, adapt it each time.)
+  - t_1 #Insert your model here (do not push it, adapt it each time.)

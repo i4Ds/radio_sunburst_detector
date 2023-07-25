@@ -11,5 +11,5 @@ model_params:
   num_dense_layers: 2
   neurons_dense_layer: 64
 training_params:
-  epochs: 5
-  batch_size: 64
+  epochs: 2
+  batch_size: 128

@@ -13,7 +13,7 @@ def get_datasets():
         directory,
         labels="inferred",
         label_mode="binary",
-        class_names=["burst", "no_burst"],
+        class_names=["no_burst", "burst"],
         color_mode="grayscale",
         batch_size=32,
         image_size=(256, 256),
@@ -31,11 +31,11 @@ def get_datasets():
         directory,
         labels="inferred",
         label_mode="binary",
-        class_names=["burst", "no_burst"],
+        class_names=["no_burst", "burst"],
         color_mode="grayscale",
         batch_size=32,
         image_size=(256, 256),
-        shuffle=True, # Because of evaluation, each time you access it, the dataset is shuffeled -> impossible to extract labels
+        shuffle=True,  # Because of evaluation, each time you access it, the dataset is shuffeled -> impossible to extract labels
         seed=42,  # can change
         validation_split=0.3,  # can change
         subset="validation",
@@ -51,7 +51,6 @@ def get_datasets():
         shuffle=False,
         seed=42,
     )
-    print("get datasets works")
     return train_ds, validation_ds, test_ds
 
 
@@ -70,10 +69,11 @@ if __name__ == "__main__":
             for i in range(9):
                 ax = plt.subplot(3, 3, i + 1)
                 plt.imshow(images[i].numpy().astype("uint8"), cmap="gray")
-                plt.title(class_names[int(labels[i])])
+                plt.title(f"{class_names[int(labels[i])]} ({labels[i][0]}).")
                 plt.axis("off")
         plt.show()
 
         # Calculate class balance
         y_true = np.concatenate([y for x, y in ds], axis=0)
+        print("Class balance in dataset:")
         print(f"{np.unique(y_true, return_counts=True)}")

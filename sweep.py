@@ -1,59 +1,74 @@
+"""
+This script runs a sweep on parameters defined in `sweep_model_label.yaml`.
+Add your parameters to the `sweep.yaml` file. Don't forget to put the base model
+config in the `sweep.yaml` file as well.
+
+The sweep has to be initated as follows:
+
+    `wandb sweep sweep.yaml`
+
+Then check the output of the Terminal and paste the comand to run the sweep.
+
+The ID can be found in the command line output.
+"""
+
+import argparse
 import os
 
-import keras.models
-import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
+from sklearn.metrics import f1_score, precision_score, recall_score
+
 import wandb
-import yaml
-from PIL import Image
-from tensorflow.keras import backend as K
-from tensorflow.keras import regularizers
-from tensorflow.keras.layers import (
-    Conv2D,
-    Dense,
-    Dropout,
-    Flatten,
-    GlobalAveragePooling2D,
-    Input,
-    MaxPooling2D,
-    UpSampling2D,
-)
-from tensorflow.keras.models import Model
-from tensorflow.keras.optimizers import SGD, Adam, RMSprop
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from wandb.keras import WandbCallback
-
 from data_preparation_utils import get_datasets
-from train_utils import build_and_train, init_wandb_from_config, load_config
+from modelbuilder import ModelBuilder
+from train_utils import load_config
 
 
-def main():
+def main(config_name: str) -> None:
+    # Wandb login
+    wandb.init()
+
     # Fix the random generator seeds for better reproducibility
     tf.random.set_seed(67)
     np.random.seed(67)
-    print("checkpoint 1")
-    # Obtain the path of the YAML file and get a config file
-    c_dir = os.getcwd()
-    config_path = os.path.join(c_dir, "config.yaml")
-    config = load_config(config_path)
-    print("checkpoint 2")
-    # Obtain the datasets, using get_datasets function from data_preparation
-    train_ds, validation_ds = get_datasets()
-    print("checkpoint 3")
-    # Use config file to obtain sweep_id
-    sweep_id = wandb.sweep(config, entity=config["entity"], project=config["project"])
-    print("checkpoint 4")
 
-    # Define a training function that uses the config file to initialize wandb and build/train the model using the datasets
-    def train_fn():
-        run = init_wandb_from_config(config)
-        build_and_train(run, train_ds, validation_ds)
+    # Send config to wandb
+    config = load_config(os.path.join("model_base_configs", config_name + ".yaml"))
+    wandb.config.update(config)
+    del config
 
-    # Calling the defined function for wandb to do hyperparameter tuning
-    wandb.agent(sweep_id, train_fn)
-    print("checkpoint 5")
+    train_ds, validation_ds, _ = get_datasets()
+
+    # Build and train the model
+    mb = ModelBuilder(model_params=wandb.config["model_params"])
+    mb.build()
+    model = mb.compile()
+    model.fit(
+        train_ds,
+        validation_data=validation_ds,
+        epochs=wandb.config["training_params"]["epochs"],
+    )
+    # Predict
+    y_pred_proba = model.predict(validation_ds).flatten()
+    y_pred = np.where(y_pred_proba > 0.5, 1, 0)
+    y_true = np.concatenate([y for x, y in validation_ds], axis=0).flatten()
+
+    # Calculate metrics, Log to wandb
+    wandb.log(
+        {
+            "precision": precision_score(y_true, y_pred, average=None),
+            "recall": recall_score(y_true, y_pred, average=None),
+            "f1": f1_score(y_true, y_pred, average=None),
+        }
+    )
 
 
 if __name__ == "__main__":
-    main()
+    parser = argparse.ArgumentParser(description="Sweep for a specific model.")
+    parser.add_argument(
+        "--config_name", metavar="config_name", required=True, help="Name of model."
+    )
+
+    args = parser.parse_args()
+    main(config_name=args.config_name)
