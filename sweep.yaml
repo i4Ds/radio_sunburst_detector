@@ -1,5 +1,7 @@
 #https://docs.wandb.ai/guides/sweeps/quickstart
 # Run it as follows: wandb sweep sweep.yaml
+# And then run the sweep as follows: wandb agent i4ds_radio_sunburst_detection/radio_sunburst_detection/<ID> # Check terminal output for ID
+
 program: sweep.py
 method: bayes
 project: radio_sunburst_detection
@@ -30,4 +32,4 @@ command:
   - ${interpreter}
   - ${program}
   - "--config_name"
-  - t_1 #Insert your model here (do not push it, adapt it each time.)
+  - t_1 #Insert your base model here

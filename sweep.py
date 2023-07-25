@@ -57,9 +57,9 @@ def main(config_name: str) -> None:
     # Calculate metrics, Log to wandb
     wandb.log(
         {
-            "precision": precision_score(y_true, y_pred, average=None),
-            "recall": recall_score(y_true, y_pred, average=None),
-            "f1": f1_score(y_true, y_pred, average=None),
+            "precision": float(precision_score(y_true, y_pred)),
+            "recall": float(recall_score(y_true, y_pred)),
+            "f1": float(f1_score(y_true, y_pred)),
         }
     )
 
