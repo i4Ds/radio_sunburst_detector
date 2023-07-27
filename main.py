@@ -10,7 +10,7 @@ from data_preparation_utils import get_datasets
 from metric_utils import log_wandb_print_class_report, plot_roc_curve
 from modelbuilder import ModelBuilder
 from train_utils import load_config
-
+import pandas as pd
 
 def main(config_name):
     # Fix the random generator seeds for better reproducibility
@@ -26,7 +26,10 @@ def main(config_name):
     )
     del config
 
-    train_ds, validation_ds, test_ds = get_datasets()
+    #read the main excel file into df
+    main_df = pd.read_excel('main_list.xlsx')
+        
+    train_ds, validation_ds, test_ds = get_datasets(main_df)
     # Log number of images in training and validation datasets
     # TODO: Log number of images in test dataset
 
