@@ -22,7 +22,7 @@ from sklearn.metrics import f1_score, precision_score, recall_score
 import pandas as pd
 
 import wandb
-from data_preparation_utils import get_datasets, directory_to_dataframe
+from data_preparation_utils import get_datasets
 from modelbuilder import ModelBuilder
 from train_utils import load_config
 from wandb.keras import WandbCallback
