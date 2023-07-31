@@ -5,13 +5,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf
 import pandas as pd
+import datetime
+from datetime import timedelta
 
 
 # Obtain training, validation and test datasets from dataframes
 def get_datasets(burst_df, noburst_df):
     
-    train_size = int(0.7 * len(burst_df))  #Same size for noburst_df since they're equal
-    val_size = int(0.15 * len(burst_df))  #Same size for noburst_df since they're equal
+    train_size = int(0.7 * len(burst_df))  
+    val_size = int(0.15 * len(burst_df))  
 
     train_burst = burst_df[:train_size]
     val_burst = burst_df[train_size : train_size + val_size]
@@ -68,6 +70,8 @@ def get_datasets(burst_df, noburst_df):
     
 
     return train_ds, val_ds, test_ds, train_df, val_df, test_df
+
+
 
 
 if __name__ == "__main__":
