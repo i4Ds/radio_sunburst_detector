@@ -53,6 +53,11 @@ class ModelBuilder:
                 learning_rate=self.model_params["learning_rate"]
             ),
             loss="binary_crossentropy",
-            metrics=["accuracy"],
+            metrics=[
+                "accuracy",
+                tf.keras.metrics.Precision(),
+                tf.keras.metrics.Recall(),
+                tf.metrics.F1Score(threshold=0.5),
+            ],
         )
         return self.model
