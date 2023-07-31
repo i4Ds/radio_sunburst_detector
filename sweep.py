@@ -13,20 +13,18 @@ The ID can be found in the command line output.
 """
 
 import argparse
-from itertools import islice
 import os
+from itertools import islice
 
 import numpy as np
 import tensorflow as tf
-from sklearn.metrics import f1_score, precision_score, recall_score
-import pandas as pd
+from wandb.keras import WandbCallback, WandbModelCheckpoint
 
 import wandb
+from configure_dataframes import directory_to_dataframe
 from data_preparation_utils import get_datasets
 from modelbuilder import ModelBuilder
 from train_utils import load_config
-from wandb.keras import WandbCallback
-from wandb.keras import WandbModelCheckpoint
 
 
 def main(config_name: str) -> None:
@@ -45,18 +43,37 @@ def main(config_name: str) -> None:
     wandb.config.update(config)
     del config
 
-    configured_burst_df = pd.read_excel("configured_burst.xlsx")
-    configured_noburst_df = pd.read_excel("configured_noburst.xlsx")
+    # Load dataframes
+    data_df = directory_to_dataframe()
 
-    train_ds, validation_ds, test_ds, train_df, val_df, test_df = get_datasets(
-        configured_burst_df, configured_noburst_df
+    # Create datasets
+    train_ds, _, _ = get_datasets(
+        data_df, val_size=0.0, test_size=0.15, sort_by_time=True
     )
 
     # Build and train the model
     mb = ModelBuilder(model_params=wandb.config["model_params"])
     mb.build()
     model = mb.compile()
-
+    # TODO: Early stopping
+    # https://keras.io/api/callbacks/early_stopping/ I guess you need to add it to the model compile? Also, we should do early stopping on val_recall or accuracy, not val_loss
+    # TODO: KFold cross validation
+    # I would probably work with the updated get_dataset_function, such as below:
+    # It works because it's sorted by time
+    # Create datasets
+    train_ds, val_ds, _ = get_datasets(
+        data_df, train_size=0.5, val_size=0.1, test_size=0.15, sort_by_time=True
+    )
+    train_ds, val_ds, _ = get_datasets(
+        data_df, train_size=0.6, val_size=0.1, test_size=0.15, sort_by_time=True
+    )
+    train_ds, val_ds, _ = get_datasets(
+        data_df, train_size=0.7, val_size=0.1, test_size=0.15, sort_by_time=True
+    )
+    # Next one will fail because of assert statement because 0.8 + 0.1 + 0.15 > 1.0
+    train_ds, val_ds, _ = get_datasets(
+        data_df, train_size=0.8, val_size=0.1, test_size=0.15, sort_by_time=True
+    )
     # Create a checkpoint for max val_accuracy
     checkpoint_acc = WandbModelCheckpoint(
         "models/best_model_acc.keras",

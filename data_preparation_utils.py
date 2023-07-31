@@ -1,34 +1,52 @@
 import os
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
 import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
-import pandas as pd
-import datetime
-from datetime import timedelta
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
+from configure_dataframes import directory_to_dataframe
 
 
 # Obtain training, validation and test datasets from dataframes
-def get_datasets(burst_df, noburst_df):
-    train_size = int(0.7 * len(burst_df))
-    val_size = int(0.15 * len(burst_df))
+def get_datasets(
+    data_df,
+    train_size=0.7,
+    test_size=0.15,
+    sort_by_time=True,
+    only_unique_time_periods=False,
+    return_dfs=False,
+):
+    data_df = data_df.copy()
+    # Shuffle the data, to make sure that all instruments appear in all datasets
+    data_df = data_df.sample(frac=1, random_state=42).reset_index(drop=True)
+    if only_unique_time_periods:
+        # Take only the first image from each time period
+        data_df = data_df.drop_duplicates(subset=["start_time"])
+    if sort_by_time:
+        # Sort by time, so that the first image is the first image in time
+        data_df = data_df.sort_values("start_time")
 
-    train_burst = burst_df[:train_size]
-    val_burst = burst_df[train_size : train_size + val_size]
-    test_burst = burst_df[train_size + val_size :]
+    # Calculate the lengths of the datasets
+    train_len = int(train_size * len(data_df))
+    test_len = int(test_size * len(data_df))
 
-    train_noburst = noburst_df[:train_size]
-    val_noburst = noburst_df[train_size : train_size + val_size]
-    test_noburst = noburst_df[train_size + val_size :]
+    # Create the dataframes
+    test_df = data_df.iloc[-test_len:]
+    train_df = data_df.iloc[:train_len]
+    val_df = data_df.iloc[train_len:-test_len]
 
-    train_df = (
-        pd.concat([train_burst, train_noburst]).sample(frac=1).reset_index(drop=True)
-    )
-    val_df = pd.concat([val_burst, val_noburst]).sample(frac=1).reset_index(drop=True)
-    test_df = (
-        pd.concat([test_burst, test_noburst]).sample(frac=1).reset_index(drop=True)
-    )
+    # Assert that the dataframes are correct
+    assert np.intersect1d(train_df["file_path"], val_df["file_path"]).size == 0
+    assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
+    assert np.intersect1d(val_df["file_path"], test_df["file_path"]).size == 0
+
+    # Print out class balance
+    print("Class balance in train dataset:")
+    print(train_df["label"].value_counts())
+    print("Class balance in validation dataset:")
+    print(val_df["label"].value_counts())
+    print("Class balance in test dataset:")
+    print(test_df["label"].value_counts())
 
     datagen = ImageDataGenerator(rescale=1.0 / 255.0)
     directory = os.getcwd()
@@ -70,16 +88,16 @@ def get_datasets(burst_df, noburst_df):
         target_size=(256, 256),
         color_mode="grayscale",
     )
-
-    return train_ds, val_ds, test_ds, train_df, val_df, test_df
+    if return_dfs:
+        return train_ds, val_ds, test_ds, train_df, val_df, test_df
+    else:
+        return train_ds, val_ds, test_ds
 
 
 if __name__ == "__main__":
-    configured_burst_df = pd.read_excel("configured_burst.xlsx")
-    configured_noburst_df = pd.read_excel("configured_noburst.xlsx")
-
+    data_df = directory_to_dataframe()
     train_ds, validation_ds, test_ds, train_df, val_df, test_df = get_datasets(
-        configured_burst_df, configured_noburst_df
+        data_df, return_dfs=True
     )
 
     class_names = list(train_ds.class_indices.keys())

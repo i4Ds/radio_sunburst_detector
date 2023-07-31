@@ -1,17 +1,18 @@
 import argparse
-from itertools import islice
 import os
+from itertools import islice
 
 import numpy as np
+import pandas as pd
 import tensorflow as tf
 from wandb.keras import WandbMetricsLogger
 
 import wandb
+from configure_dataframes import directory_to_dataframe
 from data_preparation_utils import get_datasets
 from metric_utils import log_wandb_print_class_report, plot_roc_curve
 from modelbuilder import ModelBuilder
 from train_utils import load_config
-import pandas as pd
 
 
 def main(config_name):
@@ -28,12 +29,12 @@ def main(config_name):
     )
     del config
 
-    configured_burst_df = pd.read_excel("configured_burst.xlsx")
-    configured_noburst_df = pd.read_excel("configured_noburst.xlsx")
+    # Load dataframes
+    data_df = directory_to_dataframe()
 
-    train_ds, validation_ds, test_ds, train_df, val_df, test_df = get_datasets(
-        configured_burst_df, configured_noburst_df
-    )
+    # Create datasets
+    train_ds, validation_ds, test_ds = get_datasets(data_df)
+
     # Log number of images in training and validation datasets
     # TODO: Log number of images in test dataset
 
@@ -61,21 +62,15 @@ def main(config_name):
     )
     artifact.add_file(os.path.join(wandb.run.dir, "model.keras"))
 
-    print("befor evaluate")
     # Evaluate model
     eval = model.evaluate(test_ds)
     eval_metrics = dict(zip(model.metrics_names, eval))  # Python magic
     wandb.log(eval_metrics)
-
-    print("before predict")
     # Calculate other things
     y_pred_proba = model.predict(test_ds).flatten()
-    print("predict-1")
     y_pred = np.where(y_pred_proba > 0.5, 1, 0)
-    print("predict-2")
     steps = len(test_ds)  # This will give the number of batches in the test_ds
     y_true = np.concatenate([y for x, y in islice(test_ds, steps)], axis=0).flatten()
-    print("after predict")
 
     # Plot ROC curve
     fig = plot_roc_curve(y_true, y_pred_proba)

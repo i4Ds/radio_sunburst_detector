@@ -1,46 +1,21 @@
 import os
-import numpy as np
-import tensorflow as tf
+from glob import glob
+
 import pandas as pd
-import wandb
-from data_preparation_utils import directory_to_dataframe
-from datetime import datetime
-from datetime import timedelta
 
 
-def directory_to_dataframe(label, dataframe=None):
-    # Initialize the lists to store the data
-    start_times = []
-    file_paths = []
-    labels = []
+def directory_to_dataframe(directory="data"):
+    files = glob(
+        directory + "/**/*.png"
+    )  # get all files in data with any subdirectory and return the path, starting with data
+    return pd.DataFrame([extract_information_from_path(file) for file in files])
 
-    directory = os.getcwd()
-    directory_path = os.path.join(directory, "data", label)
 
-    # Iterate over all files in the directory
-    for filename in os.listdir(directory_path):
-        if filename.endswith(".png"):
-            start_time_str = filename.split("_")[0]
-            start_time_str = start_time_str.replace(" ", "_")
-            start_time_str = start_time_str.replace("-", ":")
-            start_time = datetime.strptime(start_time_str, "%Y:%m:%d_%H:%M:%S")
-
-            # Append data to the lists
-            start_times.append(start_time)
-            file_paths.append(os.path.join("data", label, filename))
-            labels.append(label)
-
-    if dataframe == None:
-        df = pd.DataFrame(
-            {"start_time": start_times, "file_path": file_paths, "label": labels}
-        )
-    else:
-        new_df = pd.DataFrame(
-            {"time_period": start_times, "file_path": file_paths, "label": labels}
-        )
-        df = pd.concat([dataframe, new_df], ignore_index=True)
-
-    return df
+def extract_information_from_path(path):
+    label = "no_burst" if "no_burst" in path else "burst"
+    start_time_str = path.split(os.sep)[-1].split("_")[0]
+    start_time = pd.to_datetime(start_time_str, format="%Y-%m-%d %H-%M-%S")
+    return {"label": label, "start_time": start_time, "file_path": path}
 
 
 def configure_data_frame(df, max_image_num, sorted=True):
