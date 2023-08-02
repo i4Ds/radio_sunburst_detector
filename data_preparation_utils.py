@@ -2,6 +2,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from configure_dataframes import directory_to_dataframe
@@ -12,6 +13,7 @@ def get_datasets(
     data_df,
     train_size=0.7,
     test_size=0.15,
+    burst_frac=0.5,
     sort_by_time=True,
     only_unique_time_periods=False,
     return_dfs=False,
@@ -29,27 +31,23 @@ def get_datasets(
     # Calculate the lengths of the datasets
     train_len = int(train_size * len(data_df))
     test_len = int(test_size * len(data_df))
+    val_len = len(data_df) - train_len - test_len
 
     # Create the dataframes
     test_df = data_df.iloc[-test_len:]
     train_df = data_df.iloc[:train_len]
-    val_df = data_df.iloc[train_len:-test_len]
-    
-    # Select N random images from the training dataset per class
-    test_df = test_df.groupby("label").sample(
-        n=200, random_state=42
-    )
-    train_df = train_df.groupby("label").sample(
-        n=1000, random_state=42
-    )
-    val_df = val_df.groupby("label").sample(
-        n=200, random_state=42
-    )
+    val_df = data_df.iloc[train_len: train_len + val_len]
 
     # Assert that the dataframes are correct
     assert np.intersect1d(train_df["file_path"], val_df["file_path"]).size == 0
     assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
     assert np.intersect1d(val_df["file_path"], test_df["file_path"]).size == 0
+
+    # Create class balance in the dataframes
+    if burst_frac:
+        train_df = update_class_balance(train_df, burst_frac)
+        val_df = update_class_balance(val_df, burst_frac)
+        test_df = update_class_balance(test_df, burst_frac)
 
     # Print out class balance
     print("Class balance in train dataset:")
@@ -105,16 +103,33 @@ def get_datasets(
         return train_ds, val_ds, test_ds
 
 
+def update_class_balance(df, burst_frac):
+    df_bursts = df[df["label"] == "burst"]
+    df_nobursts = df[df["label"] == "no_burst"]
+    curr_ratio = len(df_bursts) / (len(df_bursts) + len(df_nobursts))
+    while burst_frac < curr_ratio:
+        # Drop a non burst randomly
+        df_to_drop = df_bursts.sample(n=1)
+        df_bursts = df_bursts.drop(df_to_drop.index)
+        curr_ratio = len(df_bursts) / (len(df_bursts) + len(df_nobursts))
+    while burst_frac > curr_ratio:
+        # Drop a burst randomly
+        df_to_drop = df_nobursts.sample(n=1)
+        df_nobursts = df_nobursts.drop(df_to_drop.index)
+        curr_ratio = len(df_bursts) / (len(df_bursts) + len(df_nobursts))
+
+    return pd.concat([df_bursts, df_nobursts])
+
 if __name__ == "__main__":
     data_df = directory_to_dataframe()
     train_ds, validation_ds, test_ds, train_df, val_df, test_df = get_datasets(
         data_df, return_dfs=True
     )
 
-    train_df.to_excel('train.xlsx')
-    val_df.to_excel('val.xlsx')
-    test_df.to_excel('test.xlsx')
-    data_df.to_excel('data.xlsx') 
+    train_df.to_excel("train.xlsx")
+    val_df.to_excel("val.xlsx")
+    test_df.to_excel("test.xlsx")
+    data_df.to_excel("data.xlsx")
 
     class_names = list(train_ds.class_indices.keys())
     for ds, ds_name, df in zip(
