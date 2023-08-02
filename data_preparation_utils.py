@@ -34,6 +34,17 @@ def get_datasets(
     test_df = data_df.iloc[-test_len:]
     train_df = data_df.iloc[:train_len]
     val_df = data_df.iloc[train_len:-test_len]
+    
+    # Select N random images from the training dataset per class
+    test_df = test_df.groupby("label").sample(
+        n=200, random_state=42
+    )
+    train_df = train_df.groupby("label").sample(
+        n=1000, random_state=42
+    )
+    val_df = val_df.groupby("label").sample(
+        n=200, random_state=42
+    )
 
     # Assert that the dataframes are correct
     assert np.intersect1d(train_df["file_path"], val_df["file_path"]).size == 0
@@ -99,6 +110,11 @@ if __name__ == "__main__":
     train_ds, validation_ds, test_ds, train_df, val_df, test_df = get_datasets(
         data_df, return_dfs=True
     )
+
+    train_df.to_excel('train.xlsx')
+    val_df.to_excel('val.xlsx')
+    test_df.to_excel('test.xlsx')
+    data_df.to_excel('data.xlsx') 
 
     class_names = list(train_ds.class_indices.keys())
     for ds, ds_name, df in zip(

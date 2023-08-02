@@ -37,7 +37,9 @@ def main(config_name):
 
     # Log number of images in training and validation datasets
     # TODO: Log number of images in test dataset
-
+    
+    early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_recall', patience = 3, verbose=1) #or val_loss, experiment 
+    
     # Build and train the model
     mb = ModelBuilder(model_params=wandb.config["model_params"])
     mb.build()
@@ -47,11 +49,11 @@ def main(config_name):
         train_ds,
         validation_data=validation_ds,
         epochs=wandb.config["training_params"]["epochs"],
-        callbacks=[WandbMetricsLogger()],
+        callbacks=[WandbMetricsLogger(), early_stopping_callback],
     )
 
     # Save the model
-    model.save(os.path.join(wandb.run.dir, "model.keras"))
+    #model.save(os.path.join(wandb.run.dir, "model.keras"))
 
     # Upload the model to wandb
     artifact = wandb.Artifact(
