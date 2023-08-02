@@ -47,8 +47,8 @@ def main(config_name: str) -> None:
     data_df = directory_to_dataframe()
 
     # Create datasets
-    train_ds, _, _ = get_datasets(
-        data_df, val_size=0.0, test_size=0.15, sort_by_time=True
+    train_ds, val_ds, _ = get_datasets(
+        data_df, sort_by_time=True
     )
 
     # Build and train the model
@@ -61,19 +61,11 @@ def main(config_name: str) -> None:
     # I would probably work with the updated get_dataset_function, such as below:
     # It works because it's sorted by time
     # Create datasets
-    train_ds, val_ds, _ = get_datasets(
-        data_df, train_size=0.5, val_size=0.1, test_size=0.15, sort_by_time=True
-    )
-    train_ds, val_ds, _ = get_datasets(
-        data_df, train_size=0.6, val_size=0.1, test_size=0.15, sort_by_time=True
-    )
-    train_ds, val_ds, _ = get_datasets(
-        data_df, train_size=0.7, val_size=0.1, test_size=0.15, sort_by_time=True
-    )
+
     # Next one will fail because of assert statement because 0.8 + 0.1 + 0.15 > 1.0
-    train_ds, val_ds, _ = get_datasets(
-        data_df, train_size=0.8, val_size=0.1, test_size=0.15, sort_by_time=True
-    )
+    #train_ds, val_ds, _ = get_datasets(
+    #    data_df, train_size=0.8, test_size=0.15, sort_by_time=True
+    #)
     # Create a checkpoint for max val_accuracy
     checkpoint_acc = WandbModelCheckpoint(
         "models/best_model_acc.keras",
@@ -93,23 +85,23 @@ def main(config_name: str) -> None:
         save_best_only=True,
         save_format="tf",
     )
-
+    early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_recall', patience = 3, verbose=1) #or val_loss, experiment 
     # wandbcallback saves epoch by epoch every metric we gave on modelbuilder to wandb
     # checkpoints to save the best model in all epochs for every sweep, may be based on recall or accuracy
     # can also load the best parameters of the model before doing an evaluation, this enables us to give the best parameters as single instance to wandb as well
 
     history = model.fit(
         train_ds,
-        validation_data=validation_ds,
+        validation_data=val_ds,
         epochs=wandb.config["training_params"]["epochs"],
-        callbacks=[WandbCallback()],
+        callbacks=[WandbCallback(),early_stopping_callback],
     )
 
     # Load one of the saved model
     # model.load_weights('models/best_model_acc.keras')
     # model.load_weights('models/best_model_recall.keras')
 
-    evaluation = model.evaluate(validation_ds, verbose=2)
+    evaluation = model.evaluate(val_ds, verbose=2)
     val_loss, val_acc, val_precision, val_recall, val_f1_score = evaluation
 
     print("-----------------------------------")
