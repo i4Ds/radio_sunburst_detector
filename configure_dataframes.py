@@ -11,11 +11,22 @@ def directory_to_dataframe(directory="data"):
     return pd.DataFrame([extract_information_from_path(file) for file in files])
 
 
-def extract_information_from_path(path):
+def extract_information_from_path(path, time_bucket_agg='_None_'):
     label = "no_burst" if "no_burst" in path else "burst"
-    start_time_str = path.split(os.sep)[-1].split("_")[0]
+    file_name = path.split(os.sep)[-1]
+    start_time_str = file_name.split("_")[0]
+
+    # Create instrument
+    tmp_ = file_name.split("_")[2:]
+    instrument = "_".join(tmp_).split(time_bucket_agg)[0]
+
+    # Create start time
     start_time = pd.to_datetime(start_time_str, format="%Y-%m-%d %H-%M-%S")
-    return {"label": label, "start_time": start_time, "file_path": path}
+
+    # Extract burst type
+    burst_type = file_name.split(time_bucket_agg)[-1].replace(".png", "")
+
+    return {"label": label, "start_time": start_time, "file_path": path, "instrument": instrument, "burst_type": burst_type}
 
 
 def configure_data_frame(df, max_image_num, sorted=True):
@@ -31,20 +42,4 @@ def configure_data_frame(df, max_image_num, sorted=True):
 
 
 if __name__ == "__main__":
-    burst_df = directory_to_dataframe("burst")
-    noburst_df = directory_to_dataframe("no_burst")
-
-    IMAGE_NUM_PER_LABEL = 1000
-
-    configured_burst_df = configure_data_frame(
-        burst_df, IMAGE_NUM_PER_LABEL
-    )  # sorted=False if you do not want sorting
-    configured_noburst_df = configure_data_frame(
-        noburst_df, IMAGE_NUM_PER_LABEL
-    )  # sorted=False if you do not want sorting
-
-    configured_burst_df.to_excel("configured_burst.xlsx", index=False)
-    configured_noburst_df.to_excel("configured_noburst.xlsx", index=False)
-
-    print(configured_burst_df.dtypes)
-    print(configured_burst_df)
+    print(directory_to_dataframe('data').sample(5))
