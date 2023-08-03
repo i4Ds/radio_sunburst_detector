@@ -13,7 +13,7 @@ def get_datasets(
     data_df,
     train_size=0.9,
     test_size=0.1,
-    burst_frac=0.5,
+    burst_frac=0.1,
     sort_by_time=True,
     only_unique_time_periods=False,
     return_dfs=False,
@@ -36,19 +36,17 @@ def get_datasets(
     test_df = data_df.iloc[-test_len:]
     train_df = data_df.iloc[:train_len]
 
-
     # Assert that the dataframes are correct
     assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
-
 
     # Create class balance in the dataframes
     if burst_frac:
         train_df = update_class_balance(train_df, burst_frac)
         test_df = update_class_balance(test_df, burst_frac)
-        
+
     if sort_by_time:
-        train_df = data_df.sort_values("start_time")
-        test_df
+        train_df = train_df.sort_values("start_time")
+        test_df = test_df.sort_values("start_time")
 
     # Print out class balance
     print("Class balance in train dataset:")
@@ -62,6 +60,7 @@ def get_datasets(
     train_ds = datagen.flow_from_dataframe(
         dataframe=train_df,
         directory=directory,
+        classes=["no_burst", "burst"],
         x_col="file_path",
         y_col="label",
         batch_size=32,
@@ -72,15 +71,15 @@ def get_datasets(
         color_mode="grayscale",
     )
 
-
     test_ds = datagen.flow_from_dataframe(
         dataframe=test_df,
         directory=directory,
+        classes=["no_burst", "burst"],
         x_col="file_path",
         y_col="label",
         batch_size=32,
         seed=42,
-        shuffle=True,
+        shuffle=False,
         class_mode="binary",
         target_size=(256, 256),
         color_mode="grayscale",
@@ -108,11 +107,10 @@ def update_class_balance(df, burst_frac):
 
     return pd.concat([df_bursts, df_nobursts])
 
+
 if __name__ == "__main__":
     data_df = directory_to_dataframe()
-    train_ds, test_ds, train_df, test_df = get_datasets(
-        data_df, return_dfs=True
-    )
+    train_ds, test_ds, train_df, test_df = get_datasets(data_df, return_dfs=True)
 
     train_df.to_excel("train.xlsx")
     test_df.to_excel("test.xlsx")

@@ -11,7 +11,7 @@ def directory_to_dataframe(directory="data"):
     return pd.DataFrame([extract_information_from_path(file) for file in files])
 
 
-def extract_information_from_path(path, time_bucket_agg='_None_'):
+def extract_information_from_path(path, time_bucket_agg="_None_"):
     label = "no_burst" if "no_burst" in path else "burst"
     file_name = path.split(os.sep)[-1]
     start_time_str = file_name.split("_")[0]
@@ -26,10 +26,15 @@ def extract_information_from_path(path, time_bucket_agg='_None_'):
     # Extract burst type
     burst_type = file_name.split(time_bucket_agg)[-1].replace(".png", "")
 
-    return {"label": label, "start_time": start_time, "file_path": path, "instrument": instrument, "burst_type": burst_type}
+    return {
+        "label": label,
+        "start_time": start_time,
+        "file_path": path,
+        "instrument": instrument,
+        "burst_type": burst_type,
+    }
 
 
 if __name__ == "__main__":
-    df = directory_to_dataframe('data')
-    df.to_excel('data_TEST.xlsx')
-    
+    df = directory_to_dataframe("data")
+    df.to_excel("data_TEST.xlsx")
