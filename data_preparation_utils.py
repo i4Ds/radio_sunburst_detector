@@ -8,11 +8,11 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from configure_dataframes import directory_to_dataframe
 
 
-# Obtain training, validation and test datasets from dataframes
+# Obtain training, and test datasets from dataframes
 def get_datasets(
     data_df,
-    train_size=0.7,
-    test_size=0.15,
+    train_size=0.9,
+    test_size=0.1,
     burst_frac=0.5,
     sort_by_time=True,
     only_unique_time_periods=False,
@@ -31,29 +31,28 @@ def get_datasets(
     # Calculate the lengths of the datasets
     train_len = int(train_size * len(data_df))
     test_len = int(test_size * len(data_df))
-    val_len = len(data_df) - train_len - test_len
 
     # Create the dataframes
     test_df = data_df.iloc[-test_len:]
     train_df = data_df.iloc[:train_len]
-    val_df = data_df.iloc[train_len: train_len + val_len]
+
 
     # Assert that the dataframes are correct
-    assert np.intersect1d(train_df["file_path"], val_df["file_path"]).size == 0
     assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
-    assert np.intersect1d(val_df["file_path"], test_df["file_path"]).size == 0
+
 
     # Create class balance in the dataframes
     if burst_frac:
         train_df = update_class_balance(train_df, burst_frac)
-        val_df = update_class_balance(val_df, burst_frac)
         test_df = update_class_balance(test_df, burst_frac)
+        
+    if sort_by_time:
+        train_df = data_df.sort_values("start_time")
+        test_df
 
     # Print out class balance
     print("Class balance in train dataset:")
     print(train_df["label"].value_counts())
-    print("Class balance in validation dataset:")
-    print(val_df["label"].value_counts())
     print("Class balance in test dataset:")
     print(test_df["label"].value_counts())
 
@@ -67,23 +66,12 @@ def get_datasets(
         y_col="label",
         batch_size=32,
         seed=42,
-        shuffle=False,
+        shuffle=True,
         class_mode="binary",
         target_size=(256, 256),
         color_mode="grayscale",
     )
-    val_ds = datagen.flow_from_dataframe(
-        dataframe=val_df,
-        directory=directory,
-        x_col="file_path",
-        y_col="label",
-        batch_size=32,
-        seed=42,
-        shuffle=False,
-        class_mode="binary",
-        target_size=(256, 256),
-        color_mode="grayscale",
-    )
+
 
     test_ds = datagen.flow_from_dataframe(
         dataframe=test_df,
@@ -92,15 +80,15 @@ def get_datasets(
         y_col="label",
         batch_size=32,
         seed=42,
-        shuffle=False,
+        shuffle=True,
         class_mode="binary",
         target_size=(256, 256),
         color_mode="grayscale",
     )
     if return_dfs:
-        return train_ds, val_ds, test_ds, train_df, val_df, test_df
+        return train_ds, test_ds, train_df, test_df
     else:
-        return train_ds, val_ds, test_ds
+        return train_ds, test_ds
 
 
 def update_class_balance(df, burst_frac):
@@ -122,20 +110,19 @@ def update_class_balance(df, burst_frac):
 
 if __name__ == "__main__":
     data_df = directory_to_dataframe()
-    train_ds, validation_ds, test_ds, train_df, val_df, test_df = get_datasets(
+    train_ds, test_ds, train_df, test_df = get_datasets(
         data_df, return_dfs=True
     )
 
     train_df.to_excel("train.xlsx")
-    val_df.to_excel("val.xlsx")
     test_df.to_excel("test.xlsx")
     data_df.to_excel("data.xlsx")
 
     class_names = list(train_ds.class_indices.keys())
     for ds, ds_name, df in zip(
-        [train_ds, validation_ds, test_ds],
-        ["train", "validation", "test"],
-        [train_df, val_df, test_df],
+        [train_ds, test_ds],
+        ["train", "test"],
+        [train_df, test_df],
     ):
         # Plot some images
         images, labels = next(

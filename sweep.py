@@ -17,6 +17,7 @@ import os
 from itertools import islice
 
 import numpy as np
+from sklearn.model_selection import KFold, StratifiedKFold
 import tensorflow as tf
 from wandb.keras import WandbCallback, WandbModelCheckpoint
 
@@ -25,6 +26,8 @@ from configure_dataframes import directory_to_dataframe
 from data_preparation_utils import get_datasets
 from modelbuilder import ModelBuilder
 from train_utils import load_config
+
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 
 def main(config_name: str) -> None:
@@ -47,85 +50,93 @@ def main(config_name: str) -> None:
     data_df = directory_to_dataframe()
 
     # Create datasets
-    train_ds, val_ds, _ = get_datasets(
-        data_df, sort_by_time=True
+    train_ds, test_ds, train_df, test_df = get_datasets(
+        data_df, sort_by_time=True, return_dfs=True, only_unique_time_periods=True
     )
 
     # Build and train the model
     mb = ModelBuilder(model_params=wandb.config["model_params"])
     mb.build()
     model = mb.compile()
-    # TODO: Early stopping
-    # https://keras.io/api/callbacks/early_stopping/ I guess you need to add it to the model compile? Also, we should do early stopping on val_recall or accuracy, not val_loss
-    # TODO: KFold cross validation
-    # I would probably work with the updated get_dataset_function, such as below:
-    # It works because it's sorted by time
-    # Create datasets
 
-    # Next one will fail because of assert statement because 0.8 + 0.1 + 0.15 > 1.0
-    #train_ds, val_ds, _ = get_datasets(
-    #    data_df, train_size=0.8, test_size=0.15, sort_by_time=True
-    #)
-    # Create a checkpoint for max val_accuracy
-    checkpoint_acc = WandbModelCheckpoint(
-        "models/best_model_acc.keras",
-        monitor="val_accuracy",
-        mode="max",
-        verbose=1,
-        save_best_only=True,
-        save_format="tf",
-    )
-
-    # Create a checkpoint for max val_recall
-    checkpoint_recall = WandbModelCheckpoint(
-        "models/best_model_recall.keras",
-        monitor="val_recall",
-        mode="max",
-        verbose=1,
-        save_best_only=True,
-        save_format="tf",
-    )
-    early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_recall', patience = 3, verbose=1) #or val_loss, experiment 
+    early_stopping_callback = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience = 3, verbose=1) #or val_recall, experiment 
     # wandbcallback saves epoch by epoch every metric we gave on modelbuilder to wandb
     # checkpoints to save the best model in all epochs for every sweep, may be based on recall or accuracy
     # can also load the best parameters of the model before doing an evaluation, this enables us to give the best parameters as single instance to wandb as well
+    
+    n_splits=5
+    skf = KFold(n_splits = n_splits)
+    X = train_df['file_path'].values
+    y = train_df['label'].values
+    datagen = ImageDataGenerator(rescale=1./255)
+    
+    recalls = []
 
-    history = model.fit(
-        train_ds,
-        validation_data=val_ds,
-        epochs=wandb.config["training_params"]["epochs"],
-        callbacks=[WandbCallback(),early_stopping_callback],
-    )
+    for fold, (train_index, val_index) in enumerate(skf.split(X, y)):
+        
+        print("----------------------------------------")
+        print(f"Training on Fold: {fold + 1}/{n_splits}")
+        print("----------------------------------------")
+        
+        train_data = train_df.iloc[train_index]
+        val_data = train_df.iloc[val_index]
+        
+        val_start = val_data.start_time.min()
+        print("val_start:", val_start)
+        val_end = val_data.start_time.max()
+        train_in_val = train_data[(train_data.start_time > val_start) & (train_data.start_time < val_end)]
+        assert train_in_val.empty, "Training data is in training data"  #gives error on second fold
+        assert len(np.unique(train_data.start_time)) == len(train_data.start_time)
+        assert len(np.unique(val_data.start_time)) == len(val_data.start_time)
+                       
+        train_data.to_excel("train_data.xlsx")
+        val_data.to_excel("val_data.xlsx")
+        
+        new_train_ds = datagen.flow_from_dataframe(
+            train_data,
+            x_col='file_path',
+            y_col='label',
+            batch_size=32,
+            seed=42,
+            shuffle=True,
+            class_mode="binary",
+            target_size=(256, 256),
+            color_mode="grayscale",
+        )
+        val_ds = datagen.flow_from_dataframe(
+            val_data,
+            x_col='file_path',
+            y_col='label',
+            batch_size=32,
+            seed=42,
+            shuffle=False,
+            class_mode="binary",
+            target_size=(256, 256),
+            color_mode="grayscale",
+        )
+        
+        history = model.fit(
+            new_train_ds,
+            validation_data=val_ds,
+            epochs=wandb.config["training_params"]["epochs"],
+            callbacks=[WandbCallback(),early_stopping_callback],
+        )
 
-    # Load one of the saved model
-    # model.load_weights('models/best_model_acc.keras')
-    # model.load_weights('models/best_model_recall.keras')
+        # Load one of the saved model
+        # model.load_weights('models/best_model_acc.keras')
+        # model.load_weights('models/best_model_recall.keras')
 
-    evaluation = model.evaluate(val_ds, verbose=2)
-    val_loss, val_acc, val_precision, val_recall, val_f1_score = evaluation
+        evaluation = model.evaluate(val_ds, verbose=2)
+        
+        val_loss, val_acc, val_precision, val_recall, val_f1_score = evaluation
 
-    print("-----------------------------------")
-    print("evaluation:")
-    print(
-        f"val_acc: {val_acc} val_loss: {val_loss} val_precision: {val_precision} val_recall: {val_recall} val_f1_score: {val_f1_score}"
-    )
-    print("----")
-    print("history:")
-    print(
-        f"val_acc: {history.history['val_accuracy']} val_loss: {history.history['val_loss']} val_precision: {history.history['val_precision']} val_recall: {history.history['val_recall']} val_f1_score: {history.history['val_f1_score']}"
-    )
-    # Calculate metrics, Log to wandb
-    wandb.log(
-        {
-            "training_acc": history.history["accuracy"][-1],
-            "val_acc": float(val_acc),
-            "loss": float(val_loss),
-            "precision": history.history["val_precision"][-1],
-            "recall": history.history["val_recall"][-1],
-            "f1": history.history["val_f1_score"][-1],
-        }
-    )
-
+        print("-----------------------------------")
+        print("evaluation:")
+        print(
+            f"val_acc: {val_acc} val_loss: {val_loss} val_precision: {val_precision} val_recall: {val_recall} val_f1_score: {val_f1_score}"
+        )
+  
+        recalls.append(evaluation)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Sweep for a specific model.")
