@@ -29,17 +29,7 @@ def extract_information_from_path(path, time_bucket_agg='_None_'):
     return {"label": label, "start_time": start_time, "file_path": path, "instrument": instrument, "burst_type": burst_type}
 
 
-def configure_data_frame(df, max_image_num, sorted=True):
-    c_df = df.drop_duplicates(subset=["start_time"])
-
-    if sorted:
-        c_df = c_df.sort_values("start_time")
-
-    c_df = c_df.reset_index(drop=True)
-    c_df = c_df.iloc[:max_image_num]
-
-    return c_df
-
-
 if __name__ == "__main__":
-    print(directory_to_dataframe('data').sample(5))
+    df = directory_to_dataframe('data')
+    df.to_excel('data_TEST.xlsx')
+    
