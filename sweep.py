@@ -55,9 +55,7 @@ def main(config_name: str) -> None:
 
     # Build and train the model
     mb = ModelBuilder(model_params=wandb.config["model_params"])
-    mb.build()
-    model = mb.compile()
-
+ 
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
         monitor="val_loss", patience=3, verbose=1
     )  # or val_recall, experiment
@@ -117,11 +115,14 @@ def main(config_name: str) -> None:
             color_mode="grayscale",
         )
 
+        mb.build()
+        model = mb.compile()
+
         _ = model.fit(
             new_train_ds,
             validation_data=val_ds,
             epochs=wandb.config["training_params"]["epochs"],
-            callbacks=[WandbCallback(), early_stopping_callback],
+            callbacks=[early_stopping_callback],
         )
 
         # Eval

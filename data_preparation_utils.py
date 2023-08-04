@@ -13,7 +13,7 @@ def get_datasets(
     data_df,
     train_size=0.9,
     test_size=0.1,
-    burst_frac=0.1,
+    burst_frac=0.5,
     sort_by_time=True,
     only_unique_time_periods=False,
     return_dfs=False,
@@ -38,6 +38,12 @@ def get_datasets(
 
     # Assert that the dataframes are correct
     assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
+    
+     # Print out class balance
+    print("Class balance in train dataset:")
+    print(train_df["label"].value_counts())
+    print("Class balance in test dataset:")
+    print(test_df["label"].value_counts())
 
     # Create class balance in the dataframes
     if burst_frac:
