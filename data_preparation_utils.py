@@ -38,8 +38,8 @@ def get_datasets(
 
     # Assert that the dataframes are correct
     assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
-    
-     # Print out class balance
+
+    # Print out class balance
     print("Class balance in train dataset:")
     print(train_df["label"].value_counts())
     print("Class balance in test dataset:")

@@ -55,7 +55,7 @@ def main(config_name: str) -> None:
 
     # Build and train the model
     mb = ModelBuilder(model_params=wandb.config["model_params"])
- 
+
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
         monitor="val_loss", patience=3, verbose=1
     )  # or val_recall, experiment
