@@ -121,15 +121,12 @@ if __name__ == "__main__":
     )
 
     ### PARAMETERS ###
-    IMAGE_NUM_BURST = 25000
+    IMAGE_NUM_BURST = 2500
     IMAGE_LENGTH = timedelta(minutes=1)
     PIXEL_PER_IMAGE_OVER_TIME = 200
     PIXEL_PER_IMAGE_OVER_FREQUENCY = 200
     INSTRUMENTS_TO_INCLUDE = [
-        "glasgow_59",
-        "swiss_landschlacht_01",
-        "alaska_haarp_62",
-        "humain_59",
+        "india_ooty_01",
     ]
     ###
 
