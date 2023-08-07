@@ -56,6 +56,10 @@ def get_datasets(
         train_df = update_class_balance_per_instrument(train_df, burst_frac)
         test_df = update_class_balance_per_instrument(test_df, burst_frac)
 
+    # Sample them again to make sure that the files are still shuffled
+    train_df = train_df.sample(frac=1, random_state=42).reset_index(drop=True)
+    test_df = test_df.sample(frac=1, random_state=42).reset_index(drop=True)
+
     if sort_by_time:
         train_df = train_df.sort_values("start_time")
         test_df = test_df.sort_values("start_time")

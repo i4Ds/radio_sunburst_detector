@@ -4,3 +4,4 @@ openpyxl
 matplotlib
 tensorflow
 numpy
+scikit-learn
