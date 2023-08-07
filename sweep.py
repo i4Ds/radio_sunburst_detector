@@ -141,6 +141,11 @@ def main(config_name: str, batch_size: int) -> None:
             }
         )
 
+        # Print out all results to one line for easier comparison
+        for metric, value in evals[-1].items():
+            print(f"{metric}: {value:.4f}", end=" | ")
+        
+
     # Calculate averages and standard deviations
     metrics_avg = {
         metric: np.mean([eval[metric] for eval in evals]) for metric in evals[0].keys()

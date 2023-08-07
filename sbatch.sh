@@ -1,6 +1,7 @@
 #!/bin/sh
 #SBATCH --time=18:00:00
-#SBATCH --cpus-per-task=1  # 
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=16G
 #SBATCH --gres=gpu:1
 #SBATCH --partition=top6
 #SBATCH --exclude=gpu23a,gpu23b,gpu23c,gpu23d
