@@ -3,4 +3,4 @@
 #SBATCH --cpus-per-task=1  # 
 #SBATCH --gres=gpu:1
 #SBATCH --partition=top6
-wandb agent i4ds_radio_sunburst_detection/radio_sunburst_detection/9wf1m1xo
+wandb agent i4ds_radio_sunburst_detection/radio_sunburst_detection/yg7qri49

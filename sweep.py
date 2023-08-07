@@ -19,6 +19,7 @@ import numpy as np
 import tensorflow as tf
 from sklearn.model_selection import KFold
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tqdm.keras import TqdmCallback
 
 import wandb
 from configure_dataframes import directory_to_dataframe
@@ -55,7 +56,7 @@ def main(config_name: str, batch_size: int) -> None:
     mb = ModelBuilder(model_params=wandb.config["model_params"])
 
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
-        monitor="val_loss", patience=10, verbose=1
+        monitor="val_f1_score", patience=10, verbose=1
     )  # or val_recall, experiment
     # wandbcallback saves epoch by epoch every metric we gave on modelbuilder to wandb
     # checkpoints to save the best model in all epochs for every sweep, may be based on recall or accuracy
@@ -120,7 +121,7 @@ def main(config_name: str, batch_size: int) -> None:
             new_train_ds,
             validation_data=val_ds,
             epochs=wandb.config["training_params"]["epochs"],
-            callbacks=[early_stopping_callback],
+            callbacks=[early_stopping_callback, TqdmCallback(verbose=1)]
         )
 
         # Eval

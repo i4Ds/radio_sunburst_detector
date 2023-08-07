@@ -173,3 +173,4 @@ start.bat
 test.xlsx
 train.xlsx
 val.xlsx
+slurm-*.out

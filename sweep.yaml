@@ -36,4 +36,4 @@ command:
   - "--config_name"
   - t_1 #Insert your base model here
   - "--batch_size"
-  - 64
+  - 128
