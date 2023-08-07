@@ -56,7 +56,7 @@ def main(config_name: str, batch_size: int) -> None:
     mb = ModelBuilder(model_params=wandb.config["model_params"])
 
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
-        monitor="val_f1_score", patience=10, verbose=1
+        monitor="val_f1_score", patience=10, verbose=1, mode="max", restore_best_weights=True
     )  # or val_recall, experiment
     # wandbcallback saves epoch by epoch every metric we gave on modelbuilder to wandb
     # checkpoints to save the best model in all epochs for every sweep, may be based on recall or accuracy

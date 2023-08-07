@@ -8,7 +8,7 @@ project: radio_sunburst_detection
 entity: i4ds_radio_sunburst_detection
 metric:
   goal: maximize
-  name: val_f1_score
+  name: val_f1_score_avg
 parameters:
   num_hidden_layers:
     values: [1, 2, 4, 8]

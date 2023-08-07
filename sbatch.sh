@@ -3,5 +3,9 @@
 #SBATCH --cpus-per-task=1  # 
 #SBATCH --gres=gpu:1
 #SBATCH --partition=top6
-conda activate radio_sunburst_detection
-wandb agent i4ds_radio_sunburst_detection/radio_sunburst_detection/0c0it7ps
+#SBATCH --exclude=gpu23a,gpu23b,gpu23c,gpu23d
+##SBATCH --nodelist=gpu23a
+CUDNN_PATH=$(dirname $(python -c "import nvidia.cudnn;print(nvidia.cudnn.__file__)"))
+export LD_LIBRARY_PATH=$CONDA_PREFIX/lib/:$CUDNN_PATH/lib:$LD_LIBRARY_PATH
+python3 -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
+wandb agent i4ds_radio_sunburst_detection/radio_sunburst_detection/96doeaw3
