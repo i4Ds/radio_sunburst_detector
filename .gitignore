@@ -170,3 +170,6 @@ configured_noburst.xlsx
 main_list.xlsx
 no_burst.xlsx
 start.bat
+test.xlsx
+train.xlsx
+val.xlsx

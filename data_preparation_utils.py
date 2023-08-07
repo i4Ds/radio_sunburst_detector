@@ -11,6 +11,15 @@ from configure_dataframes import directory_to_dataframe
 # Obtain training, and test datasets from dataframes
 def get_datasets(
     data_df,
+    instruments=[
+        "australia_assa_02",
+        "australia_assa_62",
+        "india_ooty_01",
+        "glasgow_59",
+        "swiss_landschlacht_01",
+        "alaska_haarp_62",
+        "humain_59",
+    ],
     train_size=0.9,
     test_size=0.1,
     burst_frac=0.5,
@@ -19,6 +28,8 @@ def get_datasets(
     return_dfs=False,
 ):
     data_df = data_df.copy()
+    # Select only the instruments we want
+    data_df = data_df[data_df["instrument"].isin(instruments)]
     # Shuffle the data, to make sure that all instruments appear in all datasets
     data_df = data_df.sample(frac=1, random_state=42).reset_index(drop=True)
     if only_unique_time_periods:
@@ -39,26 +50,18 @@ def get_datasets(
     # Assert that the dataframes are correct
     assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
 
-    # Print out class balance
-    print("Class balance in train dataset:")
-    print(train_df["label"].value_counts())
-    print("Class balance in test dataset:")
-    print(test_df["label"].value_counts())
-
     # Create class balance in the dataframes
     if burst_frac:
-        train_df = update_class_balance(train_df, burst_frac)
-        test_df = update_class_balance(test_df, burst_frac)
+        train_df = update_class_balance_per_instrument(train_df, burst_frac)
+        test_df = update_class_balance_per_instrument(test_df, burst_frac)
 
     if sort_by_time:
         train_df = train_df.sort_values("start_time")
         test_df = test_df.sort_values("start_time")
 
     # Print out class balance
-    print("Class balance in train dataset:")
-    print(train_df["label"].value_counts())
-    print("Class balance in test dataset:")
-    print(test_df["label"].value_counts())
+    print_class_balance(train_df, "train")
+    print_class_balance(test_df, "test")
 
     datagen = ImageDataGenerator(rescale=1.0 / 255.0)
     directory = os.getcwd()
@@ -96,22 +99,44 @@ def get_datasets(
         return train_ds, test_ds
 
 
-def update_class_balance(df, burst_frac):
-    df_bursts = df[df["label"] == "burst"]
-    df_nobursts = df[df["label"] == "no_burst"]
-    curr_ratio = len(df_bursts) / (len(df_bursts) + len(df_nobursts))
-    while burst_frac < curr_ratio:
-        # Drop a non burst randomly
-        df_to_drop = df_bursts.sample(n=1)
-        df_bursts = df_bursts.drop(df_to_drop.index)
-        curr_ratio = len(df_bursts) / (len(df_bursts) + len(df_nobursts))
-    while burst_frac > curr_ratio:
-        # Drop a burst randomly
-        df_to_drop = df_nobursts.sample(n=1)
-        df_nobursts = df_nobursts.drop(df_to_drop.index)
-        curr_ratio = len(df_bursts) / (len(df_bursts) + len(df_nobursts))
+def update_class_balance_per_instrument(df, burst_frac):
+    # List to store processed dataframes per instrument
+    dfs = []
 
-    return pd.concat([df_bursts, df_nobursts])
+    # Loop through each instrument
+    for instrument, group in df.groupby("instrument"):
+        df_bursts = group[group["label"] == "burst"]
+        df_nobursts = group[group["label"] == "no_burst"]
+
+        curr_ratio = len(df_bursts) / (len(df_bursts) + len(df_nobursts))
+        while burst_frac < curr_ratio:
+            # Drop a non burst randomly
+            df_to_drop = df_bursts.sample(n=1)
+            df_bursts = df_bursts.drop(df_to_drop.index)
+            curr_ratio = len(df_bursts) / (len(df_bursts) + len(df_nobursts))
+        while burst_frac > curr_ratio:
+            # Drop a burst randomly
+            df_to_drop = df_nobursts.sample(n=1)
+            df_nobursts = df_nobursts.drop(df_to_drop.index)
+            curr_ratio = len(df_bursts) / (len(df_bursts) + len(df_nobursts))
+
+        # Append the processed dataframe for this instrument
+        dfs.append(pd.concat([df_bursts, df_nobursts]))
+
+    # Concatenate all processed dataframes
+    return pd.concat(dfs)
+
+
+def print_class_balance(df, dataset_name):
+    print(f"Class balance in {dataset_name} dataset:")
+
+    # Group by instrument and then get value counts for each label
+    balance = (
+        df.groupby("instrument")["label"].value_counts().unstack().fillna(0).astype(int)
+    )
+
+    print(balance)
+    print("-" * 50)  # Print a separator for clarity
 
 
 if __name__ == "__main__":
