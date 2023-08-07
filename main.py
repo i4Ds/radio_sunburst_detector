@@ -3,7 +3,6 @@ import os
 from itertools import islice
 
 import numpy as np
-import pandas as pd
 import tensorflow as tf
 from wandb.keras import WandbMetricsLogger
 

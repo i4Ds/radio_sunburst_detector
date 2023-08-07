@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-from sklearn.metrics import classification_report, precision_recall_curve, roc_curve
+from sklearn.metrics import classification_report, roc_curve
 
 import wandb
 

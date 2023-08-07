@@ -1,3 +1,6 @@
 ecallisto_ng
 matplotlib
 openpyxl
+matplotlib
+tensorflow
+numpy

@@ -167,5 +167,7 @@ if __name__ == "__main__":
         required=True,
         help="Batch size.",
     )
+    # Cast to int
+    batch_size = int(parser.parse_args().batch_size)
     args = parser.parse_args()
-    main(config_name=args.config_name, batch_size=args.batch_size)
+    main(config_name=args.config_name, batch_size=batch_size)

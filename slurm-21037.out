@@ -1,0 +1,389 @@
+wandb: Starting wandb agent 🕵️
+2023-08-07 15:03:43,516 - wandb.wandb_agent - INFO - Running runs: []
+2023-08-07 15:03:43,978 - wandb.wandb_agent - INFO - Agent received command: run
+2023-08-07 15:03:43,979 - wandb.wandb_agent - INFO - Agent starting run with config:
+	dropout: 0.4935044877211577
+	encoder_filters: 128
+	encoder_kernel_size: 5
+	encoder_l1: 0.0015121612281063486
+	learning_rate: 0.06703741148556325
+	neurons_dense_layer: 16
+	num_dense_layers: 2
+	num_hidden_layers: 4
+2023-08-07 15:03:43,994 - wandb.wandb_agent - INFO - About to run command: python sweep.py --config_name t_1 --batch_size 64
+2023-08-07 15:03:47.285201: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2023-08-07 15:03:49,004 - wandb.wandb_agent - INFO - Running runs: ['ddg8tj5m']
+wandb: Currently logged in as: vincenzo-timmel (i4ds_radio_sunburst_detection). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.15.8
+wandb: Run data is saved locally in /mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/wandb/run-20230807_150355-ddg8tj5m
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run devoted-sweep-1
+wandb: ⭐️ View project at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection
+wandb: 🧹 View sweep at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/sweeps/9zk03hcy
+wandb: 🚀 View run at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/runs/ddg8tj5m
+Class balance in train dataset:
+label                  burst  no_burst
+instrument                            
+alaska_haarp_62         6230      6230
+australia_assa_02       1148      1148
+australia_assa_62       2949      2949
+glasgow_59               605       605
+humain_59               5505      5505
+india_ooty_01            589       589
+swiss_landschlacht_01    398       398
+--------------------------------------------------
+Class balance in test dataset:
+label                  burst  no_burst
+instrument                            
+alaska_haarp_62          847       847
+australia_assa_62         82        82
+glasgow_59                 5         5
+humain_59               1043      1043
+india_ooty_01            101       101
+swiss_landschlacht_01      7         7
+--------------------------------------------------
+Found 34848 validated image filenames belonging to 2 classes.
+Found 4170 validated image filenames belonging to 2 classes.
+----------------------------------------
+Training on Fold: 1/5
+----------------------------------------
+Found 27878 validated image filenames belonging to 2 classes.
+Found 6970 validated image filenames belonging to 2 classes.
+2023-08-07 15:04:54.306775: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:04:56.134525: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:04:56.137605: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:04:56.156788: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:04:56.159077: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:04:56.161253: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:05:10.550999: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:05:10.552648: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:05:10.554118: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:05:10.555550: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1639] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 13629 MB memory:  -> device: 0, name: Tesla T4, pci bus id: 0000:05:00.0, compute capability: 7.5
+Traceback (most recent call last):
+  File "/mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/sweep.py", line 171, in <module>
+    main(config_name=args.config_name, batch_size=args.batch_size)
+  File "/mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/sweep.py", line 119, in main
+    _ = model.fit(
+        ^^^^^^^^^^
+  File "/home2/vincenzo/miniconda3/envs/radio_sunburst_detection/lib/python3.11/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/home2/vincenzo/miniconda3/envs/radio_sunburst_detection/lib/python3.11/site-packages/keras/src/preprocessing/image.py", line 119, in __len__
+    return (self.n + self.batch_size - 1) // self.batch_size  # round up
+            ~~~~~~~^~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+2023-08-07 15:05:21,816 - wandb.wandb_agent - INFO - Cleaning up finished run: ddg8tj5m
+wandb: Waiting for W&B process to finish... (failed 1). Press Control-C to abort syncing.
+wandb: - 0.002 MB of 0.002 MB uploaded (0.000 MB deduped)wandb: \ 0.002 MB of 0.002 MB uploaded (0.000 MB deduped)wandb: | 0.002 MB of 0.002 MB uploaded (0.000 MB deduped)wandb: / 0.002 MB of 0.002 MB uploaded (0.000 MB deduped)wandb: - 0.002 MB of 0.002 MB uploaded (0.000 MB deduped)wandb: \ 0.002 MB of 0.002 MB uploaded (0.000 MB deduped)wandb: 🚀 View run devoted-sweep-1 at: https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/runs/ddg8tj5m
+wandb: ️⚡ View job at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjg1NTQ3MjU5/version_details/v5
+wandb: Synced 6 W&B file(s), 0 media file(s), 2 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20230807_150355-ddg8tj5m/logs
+2023-08-07 15:05:31,010 - wandb.wandb_agent - INFO - Agent received command: run
+2023-08-07 15:05:31,010 - wandb.wandb_agent - INFO - Agent starting run with config:
+	dropout: 0.1360419918299558
+	encoder_filters: 64
+	encoder_kernel_size: 3
+	encoder_l1: 0.009384404759564702
+	learning_rate: 0.0751718030763795
+	neurons_dense_layer: 32
+	num_dense_layers: 1
+	num_hidden_layers: 8
+2023-08-07 15:05:31,029 - wandb.wandb_agent - INFO - About to run command: python sweep.py --config_name t_1 --batch_size 64
+2023-08-07 15:05:33.897867: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2023-08-07 15:05:36,040 - wandb.wandb_agent - INFO - Running runs: ['2j6e41dz']
+wandb: Currently logged in as: vincenzo-timmel (i4ds_radio_sunburst_detection). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.15.8
+wandb: Run data is saved locally in /mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/wandb/run-20230807_150543-2j6e41dz
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run comic-sweep-2
+wandb: ⭐️ View project at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection
+wandb: 🧹 View sweep at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/sweeps/9zk03hcy
+wandb: 🚀 View run at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/runs/2j6e41dz
+Class balance in train dataset:
+label                  burst  no_burst
+instrument                            
+alaska_haarp_62         6230      6230
+australia_assa_02       1148      1148
+australia_assa_62       2949      2949
+glasgow_59               605       605
+humain_59               5505      5505
+india_ooty_01            589       589
+swiss_landschlacht_01    398       398
+--------------------------------------------------
+Class balance in test dataset:
+label                  burst  no_burst
+instrument                            
+alaska_haarp_62          847       847
+australia_assa_62         82        82
+glasgow_59                 5         5
+humain_59               1043      1043
+india_ooty_01            101       101
+swiss_landschlacht_01      7         7
+--------------------------------------------------
+Found 34848 validated image filenames belonging to 2 classes.
+Found 4170 validated image filenames belonging to 2 classes.
+----------------------------------------
+Training on Fold: 1/5
+----------------------------------------
+Found 27878 validated image filenames belonging to 2 classes.
+Found 6970 validated image filenames belonging to 2 classes.
+2023-08-07 15:06:26.906845: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:06:26.966176: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:06:26.968656: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:06:26.971604: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:06:26.973957: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:06:26.976140: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:06:27.660488: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:06:27.662003: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:06:27.663360: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:06:27.664668: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1639] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 13629 MB memory:  -> device: 0, name: Tesla T4, pci bus id: 0000:05:00.0, compute capability: 7.5
+Traceback (most recent call last):
+  File "/mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/sweep.py", line 171, in <module>
+    main(config_name=args.config_name, batch_size=args.batch_size)
+  File "/mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/sweep.py", line 119, in main
+    _ = model.fit(
+        ^^^^^^^^^^
+  File "/home2/vincenzo/miniconda3/envs/radio_sunburst_detection/lib/python3.11/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/home2/vincenzo/miniconda3/envs/radio_sunburst_detection/lib/python3.11/site-packages/keras/src/preprocessing/image.py", line 119, in __len__
+    return (self.n + self.batch_size - 1) // self.batch_size  # round up
+            ~~~~~~~^~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+wandb: Waiting for W&B process to finish... (failed 1). Press Control-C to abort syncing.
+wandb: 🚀 View run comic-sweep-2 at: https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/runs/2j6e41dz
+wandb: ️⚡ View job at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjg1NTQ3MjU5/version_details/v5
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20230807_150543-2j6e41dz/logs
+2023-08-07 15:06:37,966 - wandb.wandb_agent - INFO - Cleaning up finished run: 2j6e41dz
+2023-08-07 15:06:38,501 - wandb.wandb_agent - INFO - Agent received command: run
+2023-08-07 15:06:38,502 - wandb.wandb_agent - INFO - Agent starting run with config:
+	dropout: 0.3519792344100395
+	encoder_filters: 64
+	encoder_kernel_size: 3
+	encoder_l1: 0.0011565699315768917
+	learning_rate: 0.0789584607174826
+	neurons_dense_layer: 64
+	num_dense_layers: 3
+	num_hidden_layers: 8
+2023-08-07 15:06:38,507 - wandb.wandb_agent - INFO - About to run command: python sweep.py --config_name t_1 --batch_size 64
+2023-08-07 15:06:42.152524: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2023-08-07 15:06:43,516 - wandb.wandb_agent - INFO - Running runs: ['aadha2q4']
+wandb: Currently logged in as: vincenzo-timmel (i4ds_radio_sunburst_detection). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.15.8
+wandb: Run data is saved locally in /mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/wandb/run-20230807_150651-aadha2q4
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run hearty-sweep-3
+wandb: ⭐️ View project at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection
+wandb: 🧹 View sweep at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/sweeps/9zk03hcy
+wandb: 🚀 View run at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/runs/aadha2q4
+Class balance in train dataset:
+label                  burst  no_burst
+instrument                            
+alaska_haarp_62         6230      6230
+australia_assa_02       1148      1148
+australia_assa_62       2949      2949
+glasgow_59               605       605
+humain_59               5505      5505
+india_ooty_01            589       589
+swiss_landschlacht_01    398       398
+--------------------------------------------------
+Class balance in test dataset:
+label                  burst  no_burst
+instrument                            
+alaska_haarp_62          847       847
+australia_assa_62         82        82
+glasgow_59                 5         5
+humain_59               1043      1043
+india_ooty_01            101       101
+swiss_landschlacht_01      7         7
+--------------------------------------------------
+Found 34848 validated image filenames belonging to 2 classes.
+Found 4170 validated image filenames belonging to 2 classes.
+----------------------------------------
+Training on Fold: 1/5
+----------------------------------------
+Found 27878 validated image filenames belonging to 2 classes.
+Found 6970 validated image filenames belonging to 2 classes.
+2023-08-07 15:07:34.034210: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:07:34.093485: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:07:34.095976: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:07:34.098917: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:07:34.101292: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:07:34.103480: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:07:34.801037: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:07:34.802619: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:07:34.803978: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:07:34.805287: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1639] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 13629 MB memory:  -> device: 0, name: Tesla T4, pci bus id: 0000:05:00.0, compute capability: 7.5
+Traceback (most recent call last):
+  File "/mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/sweep.py", line 171, in <module>
+    main(config_name=args.config_name, batch_size=args.batch_size)
+  File "/mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/sweep.py", line 119, in main
+    _ = model.fit(
+        ^^^^^^^^^^
+  File "/home2/vincenzo/miniconda3/envs/radio_sunburst_detection/lib/python3.11/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/home2/vincenzo/miniconda3/envs/radio_sunburst_detection/lib/python3.11/site-packages/keras/src/preprocessing/image.py", line 119, in __len__
+    return (self.n + self.batch_size - 1) // self.batch_size  # round up
+            ~~~~~~~^~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+wandb: Waiting for W&B process to finish... (failed 1). Press Control-C to abort syncing.
+wandb: 🚀 View run hearty-sweep-3 at: https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/runs/aadha2q4
+wandb: ️⚡ View job at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjg1NTQ3MjU5/version_details/v5
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20230807_150651-aadha2q4/logs
+2023-08-07 15:07:45,381 - wandb.wandb_agent - INFO - Cleaning up finished run: aadha2q4
+2023-08-07 15:07:45,982 - wandb.wandb_agent - INFO - Agent received command: run
+2023-08-07 15:07:45,982 - wandb.wandb_agent - INFO - Agent starting run with config:
+	dropout: 0.03642721289085049
+	encoder_filters: 32
+	encoder_kernel_size: 5
+	encoder_l1: 0.006025971214771349
+	learning_rate: 0.0955268947744656
+	neurons_dense_layer: 32
+	num_dense_layers: 2
+	num_hidden_layers: 1
+2023-08-07 15:07:45,987 - wandb.wandb_agent - INFO - About to run command: python sweep.py --config_name t_1 --batch_size 64
+2023-08-07 15:07:49.710633: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2023-08-07 15:07:50,999 - wandb.wandb_agent - INFO - Running runs: ['du8dabhd']
+wandb: Currently logged in as: vincenzo-timmel (i4ds_radio_sunburst_detection). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.15.8
+wandb: Run data is saved locally in /mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/wandb/run-20230807_150759-du8dabhd
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run jolly-sweep-4
+wandb: ⭐️ View project at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection
+wandb: 🧹 View sweep at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/sweeps/9zk03hcy
+wandb: 🚀 View run at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/runs/du8dabhd
+Class balance in train dataset:
+label                  burst  no_burst
+instrument                            
+alaska_haarp_62         6230      6230
+australia_assa_02       1148      1148
+australia_assa_62       2949      2949
+glasgow_59               605       605
+humain_59               5505      5505
+india_ooty_01            589       589
+swiss_landschlacht_01    398       398
+--------------------------------------------------
+Class balance in test dataset:
+label                  burst  no_burst
+instrument                            
+alaska_haarp_62          847       847
+australia_assa_62         82        82
+glasgow_59                 5         5
+humain_59               1043      1043
+india_ooty_01            101       101
+swiss_landschlacht_01      7         7
+--------------------------------------------------
+Found 34848 validated image filenames belonging to 2 classes.
+Found 4170 validated image filenames belonging to 2 classes.
+----------------------------------------
+Training on Fold: 1/5
+----------------------------------------
+Found 27878 validated image filenames belonging to 2 classes.
+Found 6970 validated image filenames belonging to 2 classes.
+2023-08-07 15:08:41.717452: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:08:41.776409: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:08:41.778838: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:08:41.781775: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:08:41.784064: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:08:41.786265: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:08:42.475082: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:08:42.476622: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:08:42.477981: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:08:42.479309: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1639] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 13629 MB memory:  -> device: 0, name: Tesla T4, pci bus id: 0000:05:00.0, compute capability: 7.5
+Traceback (most recent call last):
+  File "/mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/sweep.py", line 171, in <module>
+    main(config_name=args.config_name, batch_size=args.batch_size)
+  File "/mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/sweep.py", line 119, in main
+    _ = model.fit(
+        ^^^^^^^^^^
+  File "/home2/vincenzo/miniconda3/envs/radio_sunburst_detection/lib/python3.11/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/home2/vincenzo/miniconda3/envs/radio_sunburst_detection/lib/python3.11/site-packages/keras/src/preprocessing/image.py", line 119, in __len__
+    return (self.n + self.batch_size - 1) // self.batch_size  # round up
+            ~~~~~~~^~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+wandb: Waiting for W&B process to finish... (failed 1). Press Control-C to abort syncing.
+wandb: 🚀 View run jolly-sweep-4 at: https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/runs/du8dabhd
+wandb: ️⚡ View job at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjg1NTQ3MjU5/version_details/v5
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20230807_150759-du8dabhd/logs
+2023-08-07 15:08:52,882 - wandb.wandb_agent - INFO - Cleaning up finished run: du8dabhd
+2023-08-07 15:08:53,400 - wandb.wandb_agent - INFO - Agent received command: run
+2023-08-07 15:08:53,400 - wandb.wandb_agent - INFO - Agent starting run with config:
+	dropout: 0.4265472074559446
+	encoder_filters: 64
+	encoder_kernel_size: 3
+	encoder_l1: 0.00963589413374547
+	learning_rate: 0.09606476502188556
+	neurons_dense_layer: 32
+	num_dense_layers: 2
+	num_hidden_layers: 2
+2023-08-07 15:08:53,405 - wandb.wandb_agent - INFO - About to run command: python sweep.py --config_name t_1 --batch_size 64
+2023-08-07 15:08:56.909023: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+2023-08-07 15:08:58,416 - wandb.wandb_agent - INFO - Running runs: ['k6ql7opw']
+wandb: Currently logged in as: vincenzo-timmel (i4ds_radio_sunburst_detection). Use `wandb login --relogin` to force relogin
+wandb: Tracking run with wandb version 0.15.8
+wandb: Run data is saved locally in /mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/wandb/run-20230807_150906-k6ql7opw
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run generous-sweep-5
+wandb: ⭐️ View project at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection
+wandb: 🧹 View sweep at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/sweeps/9zk03hcy
+wandb: 🚀 View run at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/runs/k6ql7opw
+Class balance in train dataset:
+label                  burst  no_burst
+instrument                            
+alaska_haarp_62         6230      6230
+australia_assa_02       1148      1148
+australia_assa_62       2949      2949
+glasgow_59               605       605
+humain_59               5505      5505
+india_ooty_01            589       589
+swiss_landschlacht_01    398       398
+--------------------------------------------------
+Class balance in test dataset:
+label                  burst  no_burst
+instrument                            
+alaska_haarp_62          847       847
+australia_assa_62         82        82
+glasgow_59                 5         5
+humain_59               1043      1043
+india_ooty_01            101       101
+swiss_landschlacht_01      7         7
+--------------------------------------------------
+Found 34848 validated image filenames belonging to 2 classes.
+Found 4170 validated image filenames belonging to 2 classes.
+----------------------------------------
+Training on Fold: 1/5
+----------------------------------------
+Found 27878 validated image filenames belonging to 2 classes.
+Found 6970 validated image filenames belonging to 2 classes.
+2023-08-07 15:09:49.193446: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:09:49.252586: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:09:49.254952: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:09:49.258414: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:09:49.260900: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:09:49.263322: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:09:49.943640: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:09:49.944968: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:09:49.946174: I tensorflow/compiler/xla/stream_executor/cuda/cuda_gpu_executor.cc:995] successful NUMA node read from SysFS had negative value (-1), but there must be at least one NUMA node, so returning NUMA node zero. See more at https://github.com/torvalds/linux/blob/v6.0/Documentation/ABI/testing/sysfs-bus-pci#L344-L355
+2023-08-07 15:09:49.947347: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1639] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 13629 MB memory:  -> device: 0, name: Tesla T4, pci bus id: 0000:05:00.0, compute capability: 7.5
+Traceback (most recent call last):
+  File "/mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/sweep.py", line 171, in <module>
+    batch_size = int(parser.parse_args().batch_size)
+  File "/mnt/nas05/clusterdata01/home2/vincenzo/radio_sunburst_detector/sweep.py", line 119, in main
+    _ = model.fit(
+        ^^^^^^^^^^
+  File "/home2/vincenzo/miniconda3/envs/radio_sunburst_detection/lib/python3.11/site-packages/keras/src/utils/traceback_utils.py", line 70, in error_handler
+    raise e.with_traceback(filtered_tb) from None
+  File "/home2/vincenzo/miniconda3/envs/radio_sunburst_detection/lib/python3.11/site-packages/keras/src/preprocessing/image.py", line 119, in __len__
+    return (self.n + self.batch_size - 1) // self.batch_size  # round up
+            ~~~~~~~^~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'int' and 'str'
+wandb: Waiting for W&B process to finish... (failed 1). Press Control-C to abort syncing.
+wandb: 🚀 View run generous-sweep-5 at: https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/runs/k6ql7opw
+wandb: ️⚡ View job at https://wandb.ai/i4ds_radio_sunburst_detection/radio_sunburst_detection/jobs/QXJ0aWZhY3RDb2xsZWN0aW9uOjg1NTQ3MjU5/version_details/v5
+wandb: Synced 6 W&B file(s), 0 media file(s), 0 artifact file(s) and 0 other file(s)
+wandb: Find logs at: ./wandb/run-20230807_150906-k6ql7opw/logs
+2023-08-07 15:10:00,290 - wandb.wandb_agent - ERROR - Detected 5 failed runs in a row, shutting down.
+2023-08-07 15:10:00,291 - wandb.wandb_agent - INFO - To change this value set WANDB_AGENT_MAX_INITIAL_FAILURES=val
+wandb: Terminating and syncing runs. Press ctrl-c to kill.
