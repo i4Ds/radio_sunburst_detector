@@ -14,13 +14,11 @@ The ID can be found in the command line output.
 
 import argparse
 import os
-from itertools import islice
 
 import numpy as np
 import tensorflow as tf
-from sklearn.model_selection import KFold, StratifiedKFold
+from sklearn.model_selection import KFold
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from wandb.keras import WandbCallback, WandbModelCheckpoint
 
 import wandb
 from configure_dataframes import directory_to_dataframe
