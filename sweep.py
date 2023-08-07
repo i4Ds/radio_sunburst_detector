@@ -121,12 +121,12 @@ def main(config_name: str, batch_size: int) -> None:
             new_train_ds,
             validation_data=val_ds,
             epochs=wandb.config["training_params"]["epochs"],
-            callbacks=[early_stopping_callback, TqdmCallback(verbose=1)]
+            callbacks=[early_stopping_callback, TqdmCallback(verbose=0)]
         )
 
         # Eval
         val_loss, val_acc, val_precision, val_recall, val_f1_score = model.evaluate(
-            val_ds, verbose=2
+            val_ds, verbose=0
         )
 
         # Log metrics
