@@ -10,10 +10,12 @@ metric:
   goal: maximize
   name: val_accuracy
 parameters:
+  num_hidden_layers:
+    values: [1, 2, 4, 8]
   encoder_filters:
-    values: [3, 6, 9]
+    values: [16, 32, 64, 128]
   encoder_kernel_size: 
-    values: [3, 5]
+    values: [3, 5, 7]
   encoder_l1:
     min: 0.00001
     max: 0.01

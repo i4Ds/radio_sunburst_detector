@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras import regularizers
 from tensorflow.keras.layers import Conv2D, Input, MaxPooling2D
+from tensorflow.keras.layers import BatchNormalization
 
 
 # Class to build the Model
@@ -27,21 +28,24 @@ class ModelBuilder:
                 activity_regularizer=regularizers.l1(self.model_params["encoder_l1"]),
                 kernel_initializer=self.model_params["weight_initialization"],
             )(x)
+            x = BatchNormalization()(x)
+            x = tf.keras.activations.relu(x)
             x = MaxPooling2D((2, 2), padding="same")(x)  # max pooling layer
 
         # max pooling layer to give us the result of the encoding process: latent space
-        encoded = Conv2D(32, (3, 3), activation="relu", padding="same")(x)
-        print(encoded.shape)
+        encoded = Conv2D(32, (3, 3), padding="same")(x)
+        encoded = BatchNormalization()(encoded)
+        encoded = tf.keras.activations.relu(encoded)
 
         # CLASSIFIER
         x = tf.keras.layers.Flatten()(encoded)
-        n = int(self.model_params["neurons_dense_layer"])  # 128, 256, 512, 1024
         for _ in range(self.model_params["num_dense_layers"]):  # 1 or 2 or 3
             x = tf.keras.layers.Dense(
-                n,
-                activation="relu",
+                int(self.model_params["neurons_dense_layer"]),
                 kernel_initializer=self.model_params["weight_initialization"],
             )(x)
+            x = BatchNormalization()(x)
+            x = tf.keras.activations.relu(x)
             x = tf.keras.layers.Dropout(self.model_params["dropout"])(x)
         output = tf.keras.layers.Dense(1, activation="sigmoid")(x)
         self.model = tf.keras.models.Model(inputs=input_img, outputs=output)
