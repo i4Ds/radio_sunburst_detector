@@ -27,7 +27,7 @@ from modelbuilder import ModelBuilder
 from train_utils import load_config
 
 
-def main(config_name: str) -> None:
+def main(config_name: str, batch_size: int) -> None:
     # Wandb login
     wandb.init()
 
@@ -55,7 +55,7 @@ def main(config_name: str) -> None:
     mb = ModelBuilder(model_params=wandb.config["model_params"])
 
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
-        monitor="val_loss", patience=3, verbose=1
+        monitor="val_loss", patience=10, verbose=1
     )  # or val_recall, experiment
     # wandbcallback saves epoch by epoch every metric we gave on modelbuilder to wandb
     # checkpoints to save the best model in all epochs for every sweep, may be based on recall or accuracy
@@ -94,7 +94,7 @@ def main(config_name: str) -> None:
             train_data,
             x_col="file_path",
             y_col="label",
-            batch_size=32,
+            batch_size=batch_size,
             seed=42,
             shuffle=True,
             class_mode="binary",
@@ -105,7 +105,7 @@ def main(config_name: str) -> None:
             val_data,
             x_col="file_path",
             y_col="label",
-            batch_size=32,
+            batch_size=batch_size,
             seed=42,
             shuffle=False,
             class_mode="binary",
@@ -161,6 +161,11 @@ if __name__ == "__main__":
     parser.add_argument(
         "--config_name", metavar="config_name", required=True, help="Name of model."
     )
-
+    parser.add_argument(
+        "--batch_size",
+        metavar="batch_size",
+        required=True,
+        help="Batch size.",
+    )
     args = parser.parse_args()
-    main(config_name=args.config_name)
+    main(config_name=args.config_name, batch_size=args.batch_size)
