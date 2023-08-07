@@ -121,6 +121,7 @@ def main(config_name: str, batch_size: int) -> None:
             new_train_ds,
             validation_data=val_ds,
             epochs=wandb.config["training_params"]["epochs"],
+            verbose=0, 
             callbacks=[early_stopping_callback, TqdmCallback(verbose=0)]
         )
 
