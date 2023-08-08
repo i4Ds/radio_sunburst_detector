@@ -235,7 +235,7 @@ class TransferLearningModelBuilder:
     @staticmethod
     def preprocess_input(x, ewc=False):
         if ewc:
-            x = np.squeeze(x[:,:, :, 0])
+            x = np.squeeze(x[:, :, 0])
             x = pd.DataFrame(x).T
             x = elimwrongchannels(x, verbose=False).T.values
             x = np.expand_dims(x, axis=-1)
