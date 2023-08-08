@@ -56,7 +56,7 @@ def main(config_name: str, batch_size: int) -> None:
     )
 
     # Build and train the model
-    mb = TransferLearningModelBuilder(model_params=wandb.config["model_params"])
+    mb = TransferLearningModelBuilder(model_params=wandb.config)
 
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
         monitor="val_f1_score",
