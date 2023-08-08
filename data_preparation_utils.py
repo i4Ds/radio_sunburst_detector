@@ -68,7 +68,7 @@ def get_datasets(
     print_class_balance(train_df, "train")
     print_class_balance(test_df, "test")
 
-    datagen = ImageDataGenerator(rescale=1.0 / 255.0)
+    datagen = ImageDataGenerator(rescale=1.0 / 255.0, samplewise_std_normalization=True)
     directory = os.getcwd()
 
     train_ds = datagen.flow_from_dataframe(

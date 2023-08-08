@@ -38,7 +38,7 @@ def main(config_name):
     # TODO: Log number of images in test dataset
 
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
-        monitor="val_recall", patience=3, verbose=1
+        monitor="val_f1_score", patience=10, verbose=1
     )  # or val_loss, experiment
 
     # Build and train the model
@@ -71,7 +71,9 @@ def main(config_name):
     wandb.log(eval_metrics)
     # Calculate other things
     y_pred_proba = model.predict(test_ds).flatten()
+    print(y_pred_proba)
     y_pred = np.where(y_pred_proba > 0.5, 1, 0)
+    print(y_pred)
     steps = len(test_ds)  # This will give the number of batches in the test_ds
     y_true = np.concatenate([y for x, y in islice(test_ds, steps)], axis=0).flatten()
 

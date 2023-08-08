@@ -137,7 +137,7 @@ def main(config_name: str, batch_size: int) -> None:
                 "val_acc": val_acc,
                 "val_precision": val_precision,
                 "val_recall": val_recall,
-                "val_f1_score": val_f1_score,
+                "val_f1_score": val_f1_score[0],
             }
         )
 
