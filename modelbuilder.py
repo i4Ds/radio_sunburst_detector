@@ -191,6 +191,7 @@ class TransferLearningModelBuilder:
         self.l1 = model_params.get("l1", 0.0)
         self.base_model_name = model_params.get("base_model_name", "EfficientNetV2B3")
         self.weight_initialization = model_params.get("weight_initialization", "he_normal")
+        self.last_layers_to_train = model_params.get("last_layers_to_train", 0)
         self.model = None
         self.base_model = None
     
@@ -202,7 +203,7 @@ class TransferLearningModelBuilder:
         else:
             raise ValueError("Invalid base model name")
         # Freeze all layers of base model for transfer learning
-        for layer in self.base_model.layers:
+        for layer in self.base_model.layers[:-self.last_layers_to_train]:
             layer.trainable = False
         x = self.base_model.output
         return x

@@ -1,7 +1,7 @@
-model_params:
-  input_shape: [256, 256, 3]
-  l1: 0.00001
-  weight_initialization: 'he_normal'
-  learning_rate: 0.001
-training_params:
-  epochs: 30
+input_shape: [256, 256, 3]
+l1: 0.00001
+weight_initialization: 'he_normal'
+learning_rate: 0.001
+last_layers_to_train: 2
+elim_wrong_channels: True
+epochs: 30

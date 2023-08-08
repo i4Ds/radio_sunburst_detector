@@ -73,6 +73,7 @@ def main(config_name: str, batch_size: int) -> None:
     kf = KFold(n_splits=n_splits, shuffle=False)
     X = train_df["file_path"].values
     y = train_df["label"].values
+    pp_f = lambda x: TransferLearningModelBuilder.preprocess_input(x, elim_wrong_channels=wandb['elim_wrong_channels']
     datagen = ImageDataGenerator(preprocessing_function=TransferLearningModelBuilder.preprocess_input)
 
     evals = []
@@ -84,6 +85,13 @@ def main(config_name: str, batch_size: int) -> None:
 
         train_data = train_df.iloc[train_index]
         val_data = train_df.iloc[val_index]
+
+        # Print out class balance
+        print("Class balance in validation set:")
+        print(val_data.label.value_counts())
+        print("Class balance in training set:")
+        print(train_data.label.value_counts())
+
 
         val_start = val_data.start_time.min()
         val_end = val_data.start_time.max()
