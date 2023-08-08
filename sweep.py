@@ -73,8 +73,8 @@ def main(config_name: str, batch_size: int) -> None:
     kf = KFold(n_splits=n_splits, shuffle=False)
     X = train_df["file_path"].values
     y = train_df["label"].values
-    pp_f = lambda x: TransferLearningModelBuilder.preprocess_input(x, elim_wrong_channels=wandb['elim_wrong_channels']
-    datagen = ImageDataGenerator(preprocessing_function=TransferLearningModelBuilder.preprocess_input)
+    pp_f = lambda x: TransferLearningModelBuilder.preprocess_input(x, elim_wrong_channels=wandb['elim_wrong_channels'])
+    datagen = ImageDataGenerator(preprocessing_function=pp_f)
 
     evals = []
 

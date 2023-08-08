@@ -9,4 +9,4 @@
 CUDNN_PATH=$(dirname $(python -c "import nvidia.cudnn;print(nvidia.cudnn.__file__)"))
 export LD_LIBRARY_PATH=$CONDA_PREFIX/lib/:$CUDNN_PATH/lib:$LD_LIBRARY_PATH
 python3 -c "import tensorflow as tf; print(tf.config.list_physical_devices('GPU'))"
-wandb agent i4ds_radio_sunburst_detection/radio_sunburst_detection/n5xkx4tw
+wandb agent i4ds_radio_sunburst_detection/radio_sunburst_detection/gwd1sn0m
