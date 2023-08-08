@@ -19,7 +19,7 @@ parameters:
   last_layers_to_train: 
     values: [0, 1, 2, 3]
   elim_wrong_channels:
-    values: [True, False]
+    values: [True]
 
 command:
   - ${interpreter}
