@@ -24,7 +24,7 @@ from tqdm.keras import TqdmCallback
 import wandb
 from configure_dataframes import directory_to_dataframe
 from data_preparation_utils import get_datasets
-from modelbuilder import ModelBuilder
+from modelbuilder import ModelBuilder, TransferLearningModelBuilder
 from train_utils import load_config
 
 
@@ -47,16 +47,23 @@ def main(config_name: str, batch_size: int) -> None:
     # Load dataframes
     data_df = directory_to_dataframe()
 
+    # Filter DF, if you want
+    data_df = data_df[data_df.instrument.isin(['australia_assa_02'])]
+
     # Create datasets
     train_ds, test_ds, train_df, test_df = get_datasets(
-        data_df, sort_by_time=True, return_dfs=True, only_unique_time_periods=True
+        data_df, sort_by_time=True, return_dfs=True, only_unique_time_periods=True, burst_frac=0.1
     )
 
     # Build and train the model
-    mb = ModelBuilder(model_params=wandb.config["model_params"])
+    mb = TransferLearningModelBuilder(model_params=wandb.config["model_params"])
 
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
-        monitor="val_f1_score", patience=10, verbose=1, mode="max", restore_best_weights=True
+        monitor="val_f1_score",
+        patience=10,
+        verbose=1,
+        mode="max",
+        restore_best_weights=True,
     )  # or val_recall, experiment
     # wandbcallback saves epoch by epoch every metric we gave on modelbuilder to wandb
     # checkpoints to save the best model in all epochs for every sweep, may be based on recall or accuracy
@@ -66,7 +73,7 @@ def main(config_name: str, batch_size: int) -> None:
     kf = KFold(n_splits=n_splits, shuffle=False)
     X = train_df["file_path"].values
     y = train_df["label"].values
-    datagen = ImageDataGenerator(rescale=1.0 / 255)
+    datagen = ImageDataGenerator(preprocessing_function=TransferLearningModelBuilder.preprocess_input)
 
     evals = []
 
@@ -100,7 +107,7 @@ def main(config_name: str, batch_size: int) -> None:
             shuffle=True,
             class_mode="binary",
             target_size=(256, 256),
-            color_mode="grayscale",
+            color_mode="rgb",
         )
         val_ds = datagen.flow_from_dataframe(
             val_data,
@@ -111,7 +118,7 @@ def main(config_name: str, batch_size: int) -> None:
             shuffle=False,
             class_mode="binary",
             target_size=(256, 256),
-            color_mode="grayscale",
+            color_mode="rgb",
         )
 
         mb.build()
@@ -121,8 +128,8 @@ def main(config_name: str, batch_size: int) -> None:
             new_train_ds,
             validation_data=val_ds,
             epochs=wandb.config["training_params"]["epochs"],
-            verbose=0, 
-            callbacks=[early_stopping_callback, TqdmCallback(verbose=0)]
+            verbose=0,
+            callbacks=[early_stopping_callback, TqdmCallback(verbose=0)],
         )
 
         # Eval
@@ -144,7 +151,6 @@ def main(config_name: str, batch_size: int) -> None:
         # Print out all results to one line for easier comparison
         for metric, value in evals[-1].items():
             print(f"{metric}: {value:.4f}", end=" | ")
-        
 
     # Calculate averages and standard deviations
     metrics_avg = {
