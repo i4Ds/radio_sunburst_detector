@@ -52,7 +52,7 @@ def main(config_name: str, batch_size: int) -> None:
 
     # Create datasets
     train_ds, test_ds, train_df, test_df = get_datasets(
-        data_df, sort_by_time=True, return_dfs=True, only_unique_time_periods=True, burst_frac=0.1
+        data_df, sort_by_time=True, return_dfs=True, only_unique_time_periods=True, burst_frac=0.3
     )
 
     # Build and train the model
