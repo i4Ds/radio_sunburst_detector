@@ -129,18 +129,12 @@ if __name__ == "__main__":
     )
 
     ### PARAMETERS ###
-    IMAGE_NUM_NON_BURST = 350000
+    IMAGE_NUM_NON_BURST = 25000
     IMAGE_LENGTH = timedelta(minutes=1)
     PIXEL_PER_IMAGE_OVER_TIME = 200
     PIXEL_PER_IMAGE_OVER_FREQUENCY = 200
     INSTRUMENTS_TO_INCLUDE = [
-        "india_ooty_01",
-        "australia_assa_02",
-        "australia_assa_62",
-        "glasgow_59",
-        "swiss_landschlacht_01",
-        "alaska_haarp_62",
-        "humain_59",
+        "australia_assa_02"
     ]
     ###
 

@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
-from ecallisto_ng.data_processing.utils import elimwrongchannels
+import umap
 from mlxtend.plotting import plot_decision_regions
+from sklearn.decomposition import PCA
 from sklearn.manifold import TSNE
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
@@ -33,20 +34,26 @@ def get_features(img_path, model, ewc=False):
     return features.squeeze()
 
 
-def scale_and_reduce(features_list):
+def scale_and_reduce(features_list, dim_reducer='tsne'):
     features_list_arr = np.array(features_list)
     num_samples = features_list_arr.shape[0]
     all_features_2d = features_list_arr.reshape(num_samples, -1)
 
     features_std = StandardScaler().fit_transform(all_features_2d)
-    tsne = TSNE(n_components=2, random_state=0)
-    low_dim_features = tsne.fit_transform(features_std)
-    return low_dim_features
+    if dim_reducer == 'tsne':
+        reducer = TSNE(n_components=2, random_state=0)
+    elif dim_reducer == 'umap':
+        reducer = umap.UMAP(n_components=2, random_state=0)
+    elif dim_reducer == 'pca':
+        reducer = PCA(n_components=2, random_state=0)
+    else:
+        raise ValueError(f"Unknown dim_reducer: {dim_reducer}")
+    return reducer.fit_transform(features_std)
 
 
 def plot_features(low_dim_features, df):
     fig, ax = plt.subplots(figsize=(8, 6))
-    ax.set_title("2D Visualization of Features with Burst Information", fontsize=18)
+    ax.set_title("2D Visualization of <reducer> Features with Burst Information", fontsize=18)
     ax.set_xlabel("Feature 1", fontsize=14)
     ax.set_ylabel("Feature 2", fontsize=14)
 
@@ -71,9 +78,9 @@ def train_and_plot_svm(low_dim_features, df):
     clf = SVC(kernel="rbf", C=1.0)
     clf.fit(low_dim_features, df["is_burst"])
     plot_decision_regions(low_dim_features, df["is_burst"].values, clf=clf, legend=2)
-    plt.xlabel("TSNE 1")
-    plt.ylabel("TSNE 2")
-    plt.title("Reduced Dimensionality with TSNE")
+    plt.xlabel("Feature 1")
+    plt.ylabel("Feature 2")
+    plt.title("Reduced Dimensionality with Reducer")
     plt.show()
     return clf
 
