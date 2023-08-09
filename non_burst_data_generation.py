@@ -134,7 +134,9 @@ if __name__ == "__main__":
     PIXEL_PER_IMAGE_OVER_TIME = 200
     PIXEL_PER_IMAGE_OVER_FREQUENCY = 200
     INSTRUMENTS_TO_INCLUDE = [
-        "australia_assa_02"
+        "australia_assa_02",
+        "swiss_landschlacht_01",
+        "alaska_haarp_62",
     ]
     ###
 
