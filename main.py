@@ -10,8 +10,11 @@ import wandb
 from configure_dataframes import directory_to_dataframe
 from data_preparation_utils import get_datasets
 from metric_utils import log_wandb_print_class_report, plot_roc_curve
-from modelbuilder import ModelBuilder
+from modelbuilder import ModelBuilder, TransferLearningModelBuilder
 from train_utils import load_config
+from keras.utils import split_dataset
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from tqdm.keras import TqdmCallback
 
 
 def main(config_name):
@@ -22,7 +25,7 @@ def main(config_name):
     # Send config to wandb
     config = load_config(os.path.join("model_base_configs", config_name + ".yaml"))
     wandb.init(
-        project="radio_sunburst_detection",
+        project="radio_sunburst_detection_main",
         config=config,
         entity="i4ds_radio_sunburst_detection",
     )
@@ -31,8 +34,59 @@ def main(config_name):
     # Load dataframes
     data_df = directory_to_dataframe()
 
+    # Filter if you want
+    if "instrument_to_use" in wandb.config:
+        data_df = data_df[data_df.instrument.isin(wandb.config["instrument_to_use"])]
+
     # Create datasets
-    train_ds, validation_ds, test_ds = get_datasets(data_df)
+    _, _, train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, return_dfs=True)
+                                            
+    # Update datasets
+    val_df, test_df = train_df.iloc[:len(train_df)//2], train_df.iloc[len(train_df)//2:]
+
+    # Get model
+    if wandb.config["model"] == "transfer":
+        mb = TransferLearningModelBuilder(model_params=wandb.config)
+    
+    # Create image generator
+    ppf = lambda x: mb.preprocess_input(x, ewc=wandb.config['elim_wrong_channels'])
+    datagen = ImageDataGenerator(preprocessing_function=ppf)
+    
+    # Create datasets
+    train_ds = datagen.flow_from_dataframe(
+        train_df,
+        x_col="file_path",
+        y_col="label",
+        batch_size=wandb.config["batch_size"],
+        seed=42,
+        shuffle=True,
+        class_mode="binary",
+        target_size=(256, 256),
+        color_mode="rgb",
+    )
+    val_ds = datagen.flow_from_dataframe(
+        val_df,
+        x_col="file_path",
+        y_col="label",
+        batch_size=wandb.config["batch_size"],
+        seed=42,
+        shuffle=False,
+        class_mode="binary",
+        target_size=(256, 256),
+        color_mode="rgb",
+    )
+
+    test_ds = datagen.flow_from_dataframe(
+        test_df,
+        x_col="file_path",
+        y_col="label",
+        batch_size=wandb.config["batch_size"],
+        seed=42,
+        shuffle=False,
+        class_mode="binary",
+        target_size=(256, 256),
+        color_mode="rgb",
+    )
 
     # Log number of images in training and validation datasets
     # TODO: Log number of images in test dataset
@@ -42,15 +96,15 @@ def main(config_name):
     )  # or val_loss, experiment
 
     # Build and train the model
-    mb = ModelBuilder(model_params=wandb.config["model_params"])
     mb.build()
     model = mb.compile()
     model.summary()
     _ = model.fit(
         train_ds,
-        validation_data=validation_ds,
-        epochs=wandb.config["training_params"]["epochs"],
-        callbacks=[WandbMetricsLogger(), early_stopping_callback],
+        validation_data=val_ds,
+        epochs=wandb.config["epochs"],
+        verbose=0,
+        callbacks=[WandbMetricsLogger(), early_stopping_callback, TqdmCallback(verbose=1)],
     )
 
     # Save the model
@@ -58,7 +112,7 @@ def main(config_name):
 
     # Upload the model to wandb
     artifact = wandb.Artifact(
-        "model",
+        config_name,
         type="model",
         description="trained model",
         metadata=dict(config_name=config_name),

@@ -17,7 +17,7 @@ import os
 
 import numpy as np
 import tensorflow as tf
-from sklearn.model_selection import KFold
+from sklearn.model_selection import KFold, TimeSeriesSplit
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tqdm.keras import TqdmCallback
 
@@ -53,7 +53,9 @@ def main(config_name: str, batch_size: int) -> None:
 
     # Create datasets
     train_ds, test_ds, train_df, test_df = get_datasets(
-        data_df, sort_by_time=True, return_dfs=True, only_unique_time_periods=True, burst_frac=wandb.config['burst_frac']
+        data_df, 
+        train_size=0.7,
+        sort_by_time=True, return_dfs=True, only_unique_time_periods=True, burst_frac=wandb.config['burst_frac']
     )
 
     # Build and train the model
@@ -70,8 +72,8 @@ def main(config_name: str, batch_size: int) -> None:
     # checkpoints to save the best model in all epochs for every sweep, may be based on recall or accuracy
     # can also load the best parameters of the model before doing an evaluation, this enables us to give the best parameters as single instance to wandb as well
 
-    n_splits = 5
-    kf = KFold(n_splits=n_splits, shuffle=False)
+    n_splits = 4
+    _s = TimeSeriesSplit(n_splits=n_splits)
     X = train_df["file_path"].values
     y = train_df["label"].values
     pp_f = lambda x: TransferLearningModelBuilder.preprocess_input(x, ewc=wandb.config['elim_wrong_channels'])
@@ -79,19 +81,24 @@ def main(config_name: str, batch_size: int) -> None:
 
     evals = []
 
-    for fold, (train_index, val_index) in enumerate(kf.split(X, y)):
+    for fold, (train_index, val_index) in enumerate(_s.split(X, y)):
         print("----------------------------------------")
         print(f"Training on Fold: {fold + 1}/{n_splits}")
         print("----------------------------------------")
 
         train_data = train_df.iloc[train_index]
         val_data = train_df.iloc[val_index]
+        val_data, test_data = val_data.iloc[: len(val_data) // 2], val_data.iloc[
+            len(val_data) // 2 :
+        ]
 
         # Print out class balance
-        print("Class balance in validation set:")
-        print(val_data.label.value_counts())
         print("Class balance in training set:")
         print(train_data.label.value_counts())
+        print("Class balance in validation set:")
+        print(val_data.label.value_counts())
+        print("Class balance in test set:")
+        print(test_data.label.value_counts())
 
 
         val_start = val_data.start_time.min()
@@ -143,7 +150,7 @@ def main(config_name: str, batch_size: int) -> None:
 
         # Eval
         val_loss, val_acc, val_precision, val_recall, val_f1_score = model.evaluate(
-            val_ds, verbose=0
+            test_data, verbose=0
         )
 
         # Log metrics

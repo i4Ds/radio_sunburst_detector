@@ -5,6 +5,8 @@ learning_rate: 0.001
 last_layers_to_train: 2
 elim_wrong_channels: True
 epochs: 30
+model: transfer
+batch_size: 64
 burst_frac: 0.1
 instrument_to_use: [
     "australia_assa_02",
