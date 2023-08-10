@@ -39,7 +39,7 @@ def main(config_name):
         data_df = data_df[data_df.instrument.isin(wandb.config["instrument_to_use"])]
 
     # Create datasets
-    _, _, train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, return_dfs=True)
+    _, _, train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, return_dfs=True, burst_frac=wandb.config["burst_frac"])
                                             
     # Update datasets
     val_df, test_df = train_df.iloc[:len(train_df)//2], train_df.iloc[len(train_df)//2:]
@@ -88,6 +88,8 @@ def main(config_name):
         color_mode="rgb",
     )
 
+    # Print out labels and their indices
+
     # Log number of images in training and validation datasets
     # TODO: Log number of images in test dataset
 
@@ -98,7 +100,6 @@ def main(config_name):
     # Build and train the model
     mb.build()
     model = mb.compile()
-    model.summary()
     _ = model.fit(
         train_ds,
         validation_data=val_ds,
@@ -111,23 +112,24 @@ def main(config_name):
     # model.save(os.path.join(wandb.run.dir, "model.keras"))
 
     # Upload the model to wandb
-    artifact = wandb.Artifact(
-        config_name,
-        type="model",
-        description="trained model",
-        metadata=dict(config_name=config_name),
-    )
-    artifact.add_file(os.path.join(wandb.run.dir, "model.keras"))
+    # if sweep, don't 
+    if not wandb.run.sweep_id:
+        artifact = wandb.Artifact(
+            config_name,
+            type="model",
+            description="trained model",
+            metadata=dict(config_name=config_name),
+        )
+        artifact.add_file(os.path.join(wandb.run.dir, "model.keras"))
 
     # Evaluate model
     eval = model.evaluate(test_ds)
     eval_metrics = dict(zip(model.metrics_names, eval))  # Python magic
     wandb.log(eval_metrics)
+    
     # Calculate other things
     y_pred_proba = model.predict(test_ds).flatten()
-    print(y_pred_proba)
     y_pred = np.where(y_pred_proba > 0.5, 1, 0)
-    print(y_pred)
     steps = len(test_ds)  # This will give the number of batches in the test_ds
     y_true = np.concatenate([y for x, y in islice(test_ds, steps)], axis=0).flatten()
 
