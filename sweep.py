@@ -48,11 +48,12 @@ def main(config_name: str, batch_size: int) -> None:
     data_df = directory_to_dataframe()
 
     # Filter DF, if you want
-    data_df = data_df[data_df.instrument.isin(['australia_assa_02'])]
+    if 'instrument_to_use' in wandb.config:
+        data_df = data_df[data_df.instrument.isin(wandb.config['instrument_to_use'])]
 
     # Create datasets
     train_ds, test_ds, train_df, test_df = get_datasets(
-        data_df, sort_by_time=True, return_dfs=True, only_unique_time_periods=True, burst_frac=0.3
+        data_df, sort_by_time=True, return_dfs=True, only_unique_time_periods=True, burst_frac=wandb.config['burst_frac']
     )
 
     # Build and train the model

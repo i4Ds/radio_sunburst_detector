@@ -25,6 +25,6 @@ command:
   - ${interpreter}
   - ${program}
   - "--config_name"
-  - transfer_3 #Insert your base model here
+  - transfer_4 #Insert your base model here
   - "--batch_size"
   - 64

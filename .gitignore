@@ -174,3 +174,4 @@ test.xlsx
 train.xlsx
 val.xlsx
 slurm-*.out
+wandb_login.sh
