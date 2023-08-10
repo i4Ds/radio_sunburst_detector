@@ -23,10 +23,8 @@ def get_datasets(
     train_size=0.9,
     test_size=0.1,
     burst_frac=0.5,
-    batch_size=64,
     sort_by_time=True,
     only_unique_time_periods=False,
-    return_dfs=False,
 ):
     data_df = data_df.copy()
     # Select only the instruments we want
@@ -68,41 +66,7 @@ def get_datasets(
     print_class_balance(train_df, "train")
     print_class_balance(test_df, "test")
 
-    datagen = ImageDataGenerator(rescale=1.0 / 255.0, samplewise_std_normalization=True)
-    directory = os.getcwd()
-
-    train_ds = datagen.flow_from_dataframe(
-        dataframe=train_df,
-        directory=directory,
-        classes=["no_burst", "burst"],
-        x_col="file_path",
-        y_col="label",
-        batch_size=batch_size,
-        seed=42,
-        shuffle=True,
-        class_mode="binary",
-        target_size=(256, 256),
-        color_mode="grayscale",
-    )
-
-    test_ds = datagen.flow_from_dataframe(
-        dataframe=test_df,
-        directory=directory,
-        classes=["no_burst", "burst"],
-        x_col="file_path",
-        y_col="label",
-        batch_size=batch_size,
-        seed=42,
-        shuffle=False,
-        class_mode="binary",
-        target_size=(256, 256),
-        color_mode="grayscale",
-    )
-    if return_dfs:
-        return train_ds, test_ds, train_df, test_df
-    else:
-        return train_ds, test_ds
-
+    return train_df, test_df
 
 def update_class_balance_per_instrument(df, burst_frac):
     # List to store processed dataframes per instrument

@@ -108,12 +108,15 @@ def main(config_name):
         callbacks=[WandbMetricsLogger(), early_stopping_callback, TqdmCallback(verbose=1)],
     )
 
-    # Save the model
-    # model.save(os.path.join(wandb.run.dir, "model.keras"))
+    # Evaluate model
+    eval = model.evaluate(test_ds)
+    eval_metrics = dict(zip(model.metrics_names, eval))  # Python magic
+    wandb.log(eval_metrics)
 
-    # Upload the model to wandb
-    # if sweep, don't 
+    # Do more things if it's not a sweep.
     if not wandb.run.sweep_id:
+            # Save the model
+        model.save(os.path.join(wandb.run.dir, "model.keras"))
         artifact = wandb.Artifact(
             config_name,
             type="model",
@@ -122,37 +125,31 @@ def main(config_name):
         )
         artifact.add_file(os.path.join(wandb.run.dir, "model.keras"))
 
-    # Evaluate model
-    eval = model.evaluate(test_ds)
-    eval_metrics = dict(zip(model.metrics_names, eval))  # Python magic
-    wandb.log(eval_metrics)
-    
-    # Calculate other things
-    y_pred_proba = model.predict(test_ds).flatten()
-    y_pred = np.where(y_pred_proba > 0.5, 1, 0)
-    steps = len(test_ds)  # This will give the number of batches in the test_ds
-    y_true = np.concatenate([y for x, y in islice(test_ds, steps)], axis=0).flatten()
+        # Calculate other things
+        y_pred_proba = model.predict(test_ds).flatten()
+        y_pred = np.where(y_pred_proba > 0.5, 1, 0)
+        steps = len(test_ds)  # This will give the number of batches in the test_ds
+        y_true = np.concatenate([y for x, y in islice(test_ds, steps)], axis=0).flatten()
 
-    # Plot ROC curve
-    fig = plot_roc_curve(y_true, y_pred_proba)
-    wandb.log({"ROC Curve": [wandb.Image(fig)]})
+        # Plot ROC curve
+        fig = plot_roc_curve(y_true, y_pred_proba)
+        wandb.log({"ROC Curve": [wandb.Image(fig)]})
 
-    # Plot confusion matrix
-    wandb.log(
-        {
-            "Confusion Matrix": wandb.plot.confusion_matrix(
-                y_true=y_true,
-                preds=y_pred,
-                class_names=list(train_ds.class_indices.keys()),
-            )
-        }
-    )
+        # Plot confusion matrix
+        wandb.log(
+            {
+                "Confusion Matrix": wandb.plot.confusion_matrix(
+                    y_true=y_true,
+                    preds=y_pred,
+                    class_names=list(train_ds.class_indices.keys()),
+                )
+            }
+        )
 
-    # Upload classification report to wandb
-    log_wandb_print_class_report(
-        y_true, y_pred, target_names=list(train_ds.class_indices.keys())
-    )
-
+        # Upload classification report to wandb
+        log_wandb_print_class_report(
+            y_true, y_pred, target_names=list(train_ds.class_indices.keys())
+        )
 
 if __name__ == "__main__":
     """
