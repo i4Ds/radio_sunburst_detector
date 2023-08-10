@@ -17,7 +17,8 @@ parameters:
     min: 0.0001
     max: 0.1
   last_layers_to_train: 
-    values: [0, 1, 2, 3]
+    min: 0
+    max: 10
   elim_wrong_channels:
     values: [True, False]
 
