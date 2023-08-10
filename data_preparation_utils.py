@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from configure_dataframes import directory_to_dataframe
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
 
 # Obtain training, and test datasets from dataframes
 def get_datasets(
@@ -132,7 +133,7 @@ if __name__ == "__main__":
         shuffle=True,
         class_mode="binary",
         target_size=(256, 256),
-        color_mode="rgb",
+        color_mode="grayscale",
     )
     val_ds = datagen.flow_from_dataframe(
         val_df,
@@ -143,7 +144,7 @@ if __name__ == "__main__":
         shuffle=False,
         class_mode="binary",
         target_size=(256, 256),
-        color_mode="rgb",
+        color_mode="grayscale",
     )
 
     test_ds = datagen.flow_from_dataframe(
@@ -155,7 +156,7 @@ if __name__ == "__main__":
         shuffle=False,
         class_mode="binary",
         target_size=(256, 256),
-        color_mode="rgb",
+        color_mode="grayscale",
     )
 
     class_names = list(train_ds.class_indices.keys())
