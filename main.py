@@ -12,6 +12,10 @@ from data_preparation_utils import get_datasets
 from metric_utils import log_wandb_print_class_report, plot_roc_curve
 from modelbuilder import ModelBuilder, TransferLearningModelBuilder
 from train_utils import load_config
+<<<<<<< HEAD
+=======
+from keras.utils import split_dataset
+>>>>>>> e964e87 (Fixed main script.)
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tqdm.keras import TqdmCallback
 
@@ -33,14 +37,18 @@ def main(config_name):
     # Load dataframes
     data_df = directory_to_dataframe()
 
+<<<<<<< HEAD
     # Create label encoder for the labels
     data_df['label_numeric'] = np.where(data_df['label'] == 'burst', 1, 0)
 
+=======
+>>>>>>> e964e87 (Fixed main script.)
     # Filter if you want
     if "instrument_to_use" in wandb.config:
         data_df = data_df[data_df.instrument.isin(wandb.config["instrument_to_use"])]
 
     # Create datasets
+<<<<<<< HEAD
     train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, burst_frac=wandb.config["burst_frac"], sort_by_time=True, only_unique_time_periods=True)
                                             
     # Update datasets
@@ -53,12 +61,21 @@ def main(config_name):
     train_df.to_excel("train_df.xlsx")
     val_df.to_excel("val_df.xlsx")
     test_df.to_excel("test_df.xlsx")
+=======
+    _, _, train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, return_dfs=True)
+                                            
+    # Update datasets
+    val_df, test_df = train_df.iloc[:len(train_df)//2], train_df.iloc[len(train_df)//2:]
+>>>>>>> e964e87 (Fixed main script.)
 
     # Get model
     if wandb.config["model"] == "transfer":
         mb = TransferLearningModelBuilder(model_params=wandb.config)
+<<<<<<< HEAD
     else:
         raise ValueError("Model not implemented.")
+=======
+>>>>>>> e964e87 (Fixed main script.)
     
     # Create image generator
     ppf = lambda x: mb.preprocess_input(x, ewc=wandb.config['elim_wrong_channels'])
@@ -68,7 +85,11 @@ def main(config_name):
     train_ds = datagen.flow_from_dataframe(
         train_df,
         x_col="file_path",
+<<<<<<< HEAD
         y_col="label_numeric",
+=======
+        y_col="label",
+>>>>>>> e964e87 (Fixed main script.)
         batch_size=wandb.config["batch_size"],
         seed=42,
         shuffle=True,
@@ -79,7 +100,11 @@ def main(config_name):
     val_ds = datagen.flow_from_dataframe(
         val_df,
         x_col="file_path",
+<<<<<<< HEAD
         y_col="label_numeric",
+=======
+        y_col="label",
+>>>>>>> e964e87 (Fixed main script.)
         batch_size=wandb.config["batch_size"],
         seed=42,
         shuffle=False,
@@ -91,7 +116,11 @@ def main(config_name):
     test_ds = datagen.flow_from_dataframe(
         test_df,
         x_col="file_path",
+<<<<<<< HEAD
         y_col="label_numeric",
+=======
+        y_col="label",
+>>>>>>> e964e87 (Fixed main script.)
         batch_size=wandb.config["batch_size"],
         seed=42,
         shuffle=False,
@@ -99,9 +128,12 @@ def main(config_name):
         target_size=(256, 256),
         color_mode="rgb",
     )
+<<<<<<< HEAD
 
     # Print out labels and their indices
 
+=======
+>>>>>>> e964e87 (Fixed main script.)
 
     # Log number of images in training and validation datasets
     # TODO: Log number of images in test dataset
@@ -121,6 +153,21 @@ def main(config_name):
         callbacks=[WandbMetricsLogger(), early_stopping_callback, TqdmCallback(verbose=1)],
     )
 
+<<<<<<< HEAD
+=======
+    # Save the model
+    # model.save(os.path.join(wandb.run.dir, "model.keras"))
+
+    # Upload the model to wandb
+    artifact = wandb.Artifact(
+        config_name,
+        type="model",
+        description="trained model",
+        metadata=dict(config_name=config_name),
+    )
+    artifact.add_file(os.path.join(wandb.run.dir, "model.keras"))
+
+>>>>>>> e964e87 (Fixed main script.)
     # Evaluate model
     eval = model.evaluate(test_ds)
     # Create nice metrics names

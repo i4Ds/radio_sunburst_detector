@@ -52,10 +52,17 @@ def main(config_name: str, batch_size: int) -> None:
         data_df = data_df[data_df.instrument.isin(wandb.config['instrument_to_use'])]
 
     # Create datasets
+<<<<<<< HEAD
     train_df, test_df = get_datasets(
         data_df, 
         train_size=0.7,
         sort_by_time=True, only_unique_time_periods=True, burst_frac=wandb.config['burst_frac']
+=======
+    train_ds, test_ds, train_df, test_df = get_datasets(
+        data_df, 
+        train_size=0.7,
+        sort_by_time=True, return_dfs=True, only_unique_time_periods=True, burst_frac=wandb.config['burst_frac']
+>>>>>>> e964e87 (Fixed main script.)
     )
 
     # Build and train the model
