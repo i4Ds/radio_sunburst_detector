@@ -1,0 +1,28 @@
+#https://docs.wandb.ai/guides/sweeps/quickstart
+# Run it as follows: wandb sweep sweep.yaml
+# And then run the sweep as follows: wandb agent i4ds_radio_sunburst_detection/radio_sunburst_detection/<ID> # Check terminal output for ID
+
+program: main.py
+method: bayes
+project: radio_sunburst_detection
+entity: i4ds_radio_sunburst_detection
+metric:
+  goal: maximize
+  name: val_f1_score_avg
+parameters:
+  l1:
+    min: 0.00001
+    max: 0.01
+  learning_rate:
+    min: 0.0001
+    max: 0.1
+  last_layers_to_train: 
+    values: [0, 1, 2, 3]
+  elim_wrong_channels:
+    values: [True, False]
+
+command:
+  - ${interpreter}
+  - ${program}
+  - "--config_name"
+  - transfer_4 #Insert your base model here
