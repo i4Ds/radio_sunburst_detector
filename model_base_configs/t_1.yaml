@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 model_params:
   input_shape: [256, 256, 1]
   encoder_filters: 32
@@ -13,6 +14,21 @@ model_params:
 
 epochs: 30
 burst_frac: 0.5
+=======
+input_shape: [256, 256, 1]
+encoder_filters: 32
+encoder_kernel_size: 3
+encoder_l1: 0.00001
+weight_initialization: 'he_normal'
+num_hidden_layers: 2
+dropout: 0.1
+optimizer: 'adam'
+learning_rate: 0.001
+num_dense_layers: 2
+neurons_dense_layer: 64
+epochs: 30
+burst_frac: 0.1
+>>>>>>> 64f9a6a (autoencoder without efficientnet preprocessing)
 instrument_to_use: [
     "australia_assa_02",
     "swiss_landschlacht_01",
