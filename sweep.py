@@ -57,7 +57,8 @@ def main(config_name: str, batch_size: int) -> None:
     )
 
     # Build and train the model
-    mb = TransferLearningModelBuilder(model_params=wandb.config)
+    mb = ModelBuilder(model_params=wandb.config["model_params"])
+    #mb = TransferLearningModelBuilder(model_params=wandb.config)
 
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
         monitor="val_f1_score",
@@ -74,9 +75,9 @@ def main(config_name: str, batch_size: int) -> None:
     kf = KFold(n_splits=n_splits, shuffle=False)
     X = train_df["file_path"].values
     y = train_df["label"].values
-    pp_f = lambda x: TransferLearningModelBuilder.preprocess_input(x, ewc=wandb.config['elim_wrong_channels'])
-    datagen = ImageDataGenerator(preprocessing_function=pp_f)
-
+    #pp_f = lambda x: TransferLearningModelBuilder.preprocess_input(x, ewc=wandb.config['elim_wrong_channels'])
+    #datagen = ImageDataGenerator(preprocessing_function=pp_f)
+    datagen = ImageDataGenerator(rescale=1.0 / 255.0)
     evals = []
 
     for fold, (train_index, val_index) in enumerate(kf.split(X, y)):
