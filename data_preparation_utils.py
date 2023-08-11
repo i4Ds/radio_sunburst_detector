@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from configure_dataframes import directory_to_dataframe
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
 
 # Obtain training, and test datasets from dataframes
 def get_datasets(
@@ -25,8 +26,8 @@ def get_datasets(
     # Shuffle the data, to make sure that all instruments appear in all datasets
     data_df = data_df.sample(frac=1, random_state=42).reset_index(drop=True)
 
-    # Define our own labels
-    data_df['label_numeric'] = np.where(data_df['label'] == 'no_burst', 0, 1)
+    # Sort so that no burst is 0 and burst is 1
+    data_df['label_keras'] = np.where(data_df['label'] == 'no_burst', '_no_burst', 'burst')
 
     if only_unique_time_periods:
         # Take only the first image from each time period
@@ -126,36 +127,36 @@ if __name__ == "__main__":
     train_ds = datagen.flow_from_dataframe(
         train_df,
         x_col="file_path",
-        y_col="label",
+        y_col="label_keras",
         batch_size=64,
         seed=42,
         shuffle=True,
         class_mode="binary",
         target_size=(256, 256),
-        color_mode="rgb",
+        color_mode="grayscale",
     )
     val_ds = datagen.flow_from_dataframe(
         val_df,
         x_col="file_path",
-        y_col="label",
+        y_col="label_keras",
         batch_size=64,
         seed=42,
         shuffle=False,
         class_mode="binary",
         target_size=(256, 256),
-        color_mode="rgb",
+        color_mode="grayscale",
     )
 
     test_ds = datagen.flow_from_dataframe(
         test_df,
         x_col="file_path",
-        y_col="label",
+        y_col="label_keras",
         batch_size=64,
         seed=42,
         shuffle=False,
         class_mode="binary",
         target_size=(256, 256),
-        color_mode="rgb",
+        color_mode="grayscale",
     )
 
     class_names = list(train_ds.class_indices.keys())

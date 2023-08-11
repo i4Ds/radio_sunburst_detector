@@ -37,10 +37,6 @@ def main(config_name):
     # Load dataframes
     data_df = directory_to_dataframe()
 
-<<<<<<< HEAD
-    # Create label encoder for the labels
-    data_df['label_numeric'] = np.where(data_df['label'] == 'burst', 1, 0)
-
 =======
 >>>>>>> e964e87 (Fixed main script.)
     # Filter if you want
@@ -85,11 +81,7 @@ def main(config_name):
     train_ds = datagen.flow_from_dataframe(
         train_df,
         x_col="file_path",
-<<<<<<< HEAD
-        y_col="label_numeric",
-=======
-        y_col="label",
->>>>>>> e964e87 (Fixed main script.)
+        y_col="label_keras",
         batch_size=wandb.config["batch_size"],
         seed=42,
         shuffle=True,
@@ -100,11 +92,7 @@ def main(config_name):
     val_ds = datagen.flow_from_dataframe(
         val_df,
         x_col="file_path",
-<<<<<<< HEAD
-        y_col="label_numeric",
-=======
-        y_col="label",
->>>>>>> e964e87 (Fixed main script.)
+        y_col="label_keras",
         batch_size=wandb.config["batch_size"],
         seed=42,
         shuffle=False,
@@ -116,11 +104,7 @@ def main(config_name):
     test_ds = datagen.flow_from_dataframe(
         test_df,
         x_col="file_path",
-<<<<<<< HEAD
-        y_col="label_numeric",
-=======
-        y_col="label",
->>>>>>> e964e87 (Fixed main script.)
+        y_col="label_keras",
         batch_size=wandb.config["batch_size"],
         seed=42,
         shuffle=False,
