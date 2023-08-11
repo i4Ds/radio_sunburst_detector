@@ -126,7 +126,7 @@ if __name__ == "__main__":
     train_ds = datagen.flow_from_dataframe(
         train_df,
         x_col="file_path",
-        y_col="label",
+        y_col="label_keras",
         batch_size=64,
         seed=42,
         shuffle=True,
@@ -137,7 +137,7 @@ if __name__ == "__main__":
     val_ds = datagen.flow_from_dataframe(
         val_df,
         x_col="file_path",
-        y_col="label",
+        y_col="label_keras",
         batch_size=64,
         seed=42,
         shuffle=False,
@@ -149,7 +149,7 @@ if __name__ == "__main__":
     test_ds = datagen.flow_from_dataframe(
         test_df,
         x_col="file_path",
-        y_col="label",
+        y_col="label_keras",
         batch_size=64,
         seed=42,
         shuffle=False,
