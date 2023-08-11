@@ -33,9 +33,6 @@ def main(config_name):
     # Load dataframes
     data_df = directory_to_dataframe()
 
-    # Create label encoder for the labels
-    data_df['label_numeric'] = np.where(data_df['label'] == 'burst', 1, 0)
-
     # Filter if you want
     if "instrument_to_use" in wandb.config:
         data_df = data_df[data_df.instrument.isin(wandb.config["instrument_to_use"])]
