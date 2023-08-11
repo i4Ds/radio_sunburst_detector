@@ -105,6 +105,8 @@ def main(config_name):
     )
 
     # Print out labels and their indices
+    print("Labels and their indices:")
+    print("-" * 30)
     print(train_ds.class_indices)
     print(val_ds.class_indices)
     print(test_ds.class_indices)

@@ -132,9 +132,9 @@ if __name__ == "__main__":
     )
 
     # Get sample
-    train_df = train_df.sample(n=1000, random_state=42)
-    val_df = val_df.sample(n=1000, random_state=42)
-    test_df = test_df.sample(n=1000, random_state=42)
+    train_df = train_df.sample(n=100, random_state=42)
+    val_df = val_df.sample(n=100, random_state=42)
+    test_df = test_df.sample(n=100, random_state=42)
 
     train_df.to_excel("train.xlsx")
     test_df.to_excel("test.xlsx")
@@ -195,6 +195,7 @@ if __name__ == "__main__":
             ax = plt.subplot(3, 3, i + 1)
             plt.imshow(images[i], cmap="gray")
             plt.title(f"{class_names[int(labels[i])]} ({labels[i]}).")
+            print(f"Image Min: {images[i].min()}, Image Max: {images[i].max()}")
             plt.axis("off")
         plt.show()
 

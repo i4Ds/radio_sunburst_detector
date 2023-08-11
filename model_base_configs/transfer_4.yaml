@@ -6,7 +6,7 @@ learning_rate: 0.001
 last_layers_to_train: 2
 elim_wrong_channels: False
 epochs: 30
-model: transfer
+base_model_name: EfficientNetV2L
 batch_size: 64
 burst_frac: 0.5
 instrument_to_use: [

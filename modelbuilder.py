@@ -4,8 +4,7 @@ import pandas as pd
 import tensorflow as tf
 from skimage import filters
 from tensorflow.keras import regularizers
-from tensorflow.keras.applications import EfficientNetV2B3
-from tensorflow.keras.applications.efficientnet import preprocess_input
+from tensorflow.keras.applications import EfficientNetV2B3, EfficientNetV2M
 from tensorflow.keras.layers import (
     BatchNormalization,
     Conv2D,
@@ -216,6 +215,11 @@ class TransferLearningModelBuilder:
             self.base_model = EfficientNetV2B3(
                 weights="imagenet", include_top=False, input_tensor=x
             )
+
+        elif self.base_model_name == "EfficientNetV2L":
+            self.base_model = EfficientNetV2M(
+                weights="imagenet", include_top=False, input_tensor=x
+            )
         else:
             raise ValueError("Invalid base model name")
 
@@ -264,5 +268,4 @@ class TransferLearningModelBuilder:
             x = pd.DataFrame(x).T
             x = elimwrongchannels(x, verbose=False).T.values
             x = np.expand_dims(x, axis=-1)
-
-        return preprocess_input(x)
+        return x

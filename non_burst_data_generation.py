@@ -129,7 +129,7 @@ if __name__ == "__main__":
     )
 
     ### PARAMETERS ###
-    IMAGE_NUM_NON_BURST = 25000
+    IMAGE_NUM_NON_BURST = 30000
     IMAGE_LENGTH = timedelta(minutes=1)
     PIXEL_PER_IMAGE_OVER_TIME = 200
     PIXEL_PER_IMAGE_OVER_FREQUENCY = 200
@@ -137,7 +137,7 @@ if __name__ == "__main__":
         "australia_assa_02",
         "swiss_landschlacht_01",
         "alaska_haarp_62",
-    ]
+]
     ###
 
     # Because burst list only contains the antenna, not the unique instruments, translate
