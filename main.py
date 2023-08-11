@@ -12,7 +12,6 @@ from data_preparation_utils import get_datasets
 from metric_utils import log_wandb_print_class_report, plot_roc_curve
 from modelbuilder import ModelBuilder, TransferLearningModelBuilder
 from train_utils import load_config
-from keras.utils import split_dataset
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tqdm.keras import TqdmCallback
 
@@ -34,15 +33,26 @@ def main(config_name):
     # Load dataframes
     data_df = directory_to_dataframe()
 
+    # Create label encoder for the labels
+    data_df['label_numeric'] = np.where(data_df['label'] == 'burst', 1, 0)
+
     # Filter if you want
     if "instrument_to_use" in wandb.config:
         data_df = data_df[data_df.instrument.isin(wandb.config["instrument_to_use"])]
 
     # Create datasets
-    train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, burst_frac=wandb.config["burst_frac"])
+    train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, burst_frac=wandb.config["burst_frac"], sort_by_time=True, only_unique_time_periods=True)
                                             
     # Update datasets
     val_df, test_df = test_df.iloc[:len(test_df)//2], test_df.iloc[len(test_df)//2:]
+
+    # Create label encoder for the labels
+
+
+    # To excel for manual inspection
+    train_df.to_excel("train_df.xlsx")
+    val_df.to_excel("val_df.xlsx")
+    test_df.to_excel("test_df.xlsx")
 
     # Get model
     if wandb.config["model"] == "transfer":
@@ -92,6 +102,7 @@ def main(config_name):
 
     # Print out labels and their indices
 
+
     # Log number of images in training and validation datasets
     # TODO: Log number of images in test dataset
 
@@ -120,7 +131,7 @@ def main(config_name):
 
     # Do more things if it's not a sweep.
     if not wandb.run.sweep_id:
-            # Save the model
+        # Save the model
         model.save(os.path.join(wandb.run.dir, "model.keras"))
         artifact = wandb.Artifact(
             config_name,
