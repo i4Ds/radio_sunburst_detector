@@ -39,7 +39,7 @@ def main(config_name):
         data_df = data_df[data_df.instrument.isin(wandb.config["instrument_to_use"])]
 
     # Create datasets
-    _, _, train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, return_dfs=True, burst_frac=wandb.config["burst_frac"])
+    train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, burst_frac=wandb.config["burst_frac"])
                                             
     # Update datasets
     val_df, test_df = train_df.iloc[:len(train_df)//2], train_df.iloc[len(train_df)//2:]

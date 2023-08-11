@@ -3,7 +3,7 @@ l1: 0.00001
 weight_initialization: 'he_normal'
 learning_rate: 0.001
 last_layers_to_train: 2
-elim_wrong_channels: True
+elim_wrong_channels: False
 epochs: 30
 model: transfer
 batch_size: 64
