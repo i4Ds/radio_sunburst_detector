@@ -8,7 +8,7 @@ elim_wrong_channels: False
 epochs: 30
 model: transfer
 batch_size: 64
-burst_frac: 0.1
+burst_frac: 0.5
 instrument_to_use: [
     "australia_assa_02",
     "swiss_landschlacht_01",
