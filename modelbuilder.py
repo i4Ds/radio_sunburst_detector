@@ -12,6 +12,7 @@ from tensorflow.keras.layers import (
     Dense,
     Flatten,
     Input,
+    Lambda,
     MaxPooling2D,
 )
 from tensorflow.keras.models import Model
@@ -121,6 +122,7 @@ def elimwrongchannels(
 
     return df
 
+
 # Class to build the Model
 class ModelBuilder:
     def __init__(
@@ -190,22 +192,37 @@ class TransferLearningModelBuilder:
         self.learning_rate = model_params.get("learning_rate", 0.001)
         self.l1 = model_params.get("l1", 0.0)
         self.base_model_name = model_params.get("base_model_name", "EfficientNetV2B3")
-        self.weight_initialization = model_params.get("weight_initialization", "he_normal")
+        self.weight_initialization = model_params.get(
+            "weight_initialization", "he_normal"
+        )
         self.last_layers_to_train = model_params.get("last_layers_to_train", 0)
         self.dropout = model_params.get("dropout", 0.0)
         self.model = None
         self.base_model = None
-    
+
     def build_base_model(self):
+        # Input layer for the grayscale image
+        input_layer = tf.keras.layers.Input(shape=self.input_shape)
+
+        # Check if the image is grayscale (channel dimension is 1)
+        if self.input_shape[-1] == 1:
+            # Lambda layer to repeat the grayscale channel three times
+            x = Lambda(lambda x: tf.repeat(x, 3, axis=-1))(input_layer)
+        else:
+            x = input_layer
+
+        # Base model initialization
         if self.base_model_name == "EfficientNetV2B3":
             self.base_model = EfficientNetV2B3(
-                weights="imagenet", include_top=False, input_shape=self.input_shape
+                weights="imagenet", include_top=False, input_tensor=x
             )
         else:
             raise ValueError("Invalid base model name")
+
         # Freeze all layers of base model for transfer learning
-        for layer in self.base_model.layers[:-self.last_layers_to_train]:
+        for layer in self.base_model.layers[: -self.last_layers_to_train]:
             layer.trainable = False
+
         x = self.base_model.output
         return x
 
@@ -215,11 +232,12 @@ class TransferLearningModelBuilder:
 
         # Classifier with L1 regularization
         if self.dropout > 0.0:
-            x =  tf.keras.layers.Dropout(self.dropout)(x)
+            x = tf.keras.layers.Dropout(self.dropout)(x)
         output = Dense(
-            1, activation="sigmoid", 
-            kernel_regularizer=regularizers.l1(self.l1), 
-            kernel_initializer=self.weight_initialization
+            1,
+            activation="sigmoid",
+            kernel_regularizer=regularizers.l1(self.l1),
+            kernel_initializer=self.weight_initialization,
         )(x)
 
         self.model = Model(inputs=self.base_model.input, outputs=output)
@@ -246,6 +264,5 @@ class TransferLearningModelBuilder:
             x = pd.DataFrame(x).T
             x = elimwrongchannels(x, verbose=False).T.values
             x = np.expand_dims(x, axis=-1)
-            x = np.repeat(x, 3, axis=-1)
-            x = np.expand_dims(x, axis=0)
+
         return preprocess_input(x)

@@ -4,6 +4,7 @@ import pandas as pd
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from configure_dataframes import directory_to_dataframe
+from modelbuilder import TransferLearningModelBuilder
 
 
 # Obtain training, and test datasets from dataframes
@@ -27,7 +28,9 @@ def get_datasets(
     data_df = data_df.sample(frac=1, random_state=42).reset_index(drop=True)
 
     # Sort so that no burst is 0 and burst is 1
-    data_df['label_keras'] = np.where(data_df['label'] == 'no_burst', '_no_burst', 'burst')
+    data_df["label_keras"] = np.where(
+        data_df["label"] == "no_burst", "_no_burst", "burst"
+    )
 
     if only_unique_time_periods:
         # Take only the first image from each time period
@@ -60,13 +63,14 @@ def get_datasets(
     # Print out class balance
     print_class_balance(train_df, "train")
     print_class_balance(test_df, "test")
-    
+
     # Final asserts
     assert train_df.start_time.max() < test_df.start_time.min()
     # Assert that the dataframes are correct
     assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
 
     return train_df, test_df
+
 
 def update_class_balance_per_instrument(df, burst_frac):
     # List to store processed dataframes per instrument
@@ -111,17 +115,33 @@ def print_class_balance(df, dataset_name):
 if __name__ == "__main__":
     data_df = directory_to_dataframe()
     # Create datasets
-    train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, burst_frac=0.5, sort_by_time=True, only_unique_time_periods=True)
-                                            
+    train_df, test_df = get_datasets(
+        data_df,
+        train_size=0.7,
+        test_size=0.3,
+        burst_frac=0.5,
+        sort_by_time=True,
+        only_unique_time_periods=True,
+    )
+
     # Update datasets
-    val_df, test_df = test_df.iloc[:len(test_df)//2], test_df.iloc[len(test_df)//2:]
+    val_df, test_df = (
+        test_df.iloc[: len(test_df) // 2],
+        test_df.iloc[len(test_df) // 2 :],
+    )
+
+    # Get sample
+    train_df = train_df.sample(n=1000, random_state=42)
+    val_df = val_df.sample(n=1000, random_state=42)
+    test_df = test_df.sample(n=1000, random_state=42)
 
     train_df.to_excel("train.xlsx")
     test_df.to_excel("test.xlsx")
     data_df.to_excel("data.xlsx")
 
     # Data gen
-    datagen = ImageDataGenerator()
+    ppf = lambda x: TransferLearningModelBuilder.preprocess_input(x, ewc=False)
+    datagen = ImageDataGenerator(preprocessing_function=ppf)
 
     # Create datasets
     train_ds = datagen.flow_from_dataframe(

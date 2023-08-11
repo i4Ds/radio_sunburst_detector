@@ -1,5 +1,6 @@
-import wandb
 import yaml
+
+import wandb
 
 
 # Load YAML config file
@@ -7,6 +8,7 @@ def load_config(config_path):
     with open(config_path, "r") as config_file:
         config = yaml.safe_load(config_file)
     return config
+
 
 def train_model(model, train_ds, validation_ds, epochs, callbacks):
     model.fit(
@@ -17,6 +19,7 @@ def train_model(model, train_ds, validation_ds, epochs, callbacks):
     )
     return model
 
+
 # Initialize wandb using the config
 def init_wandb_from_config(config):
     run = wandb.init(
@@ -26,6 +29,7 @@ def init_wandb_from_config(config):
         config=config["parameters"],
     )
     return run
+
 
 def check_artifact_exists(project_name, entity_name, artifact_name):
     # Construct artifact URL.
@@ -38,9 +42,10 @@ def check_artifact_exists(project_name, entity_name, artifact_name):
         # Artifact does not exist.
         return False
 
+
 def get_or_train_model(config_name, project_name, entity_name):
     artifact_name = f"{config_name}:latest"
-    
+
     # Check if artifact exists.
     if check_artifact_exists(project_name, entity_name, artifact_name):
         # Download the artifact.
@@ -51,21 +56,21 @@ def get_or_train_model(config_name, project_name, entity_name):
     else:
         # Train the model.
         model = train_model()
-        
+
         # Save the model locally.
         model_path = os.path.join(wandb.run.dir, "model.keras")
         model.save(model_path)
-        
+
         # Create and upload artifact to wandb.
         artifact = wandb.Artifact(
             config_name,
             type="model",
             description="trained model",
-            metadata=dict(config_name=config_name)
+            metadata=dict(config_name=config_name),
         )
         artifact.add_file(model_path)
         wandb.log_artifact(artifact)
-    
+
     return model
 
 
