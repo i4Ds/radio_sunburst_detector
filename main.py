@@ -68,7 +68,7 @@ def main(config_name):
     train_ds = datagen.flow_from_dataframe(
         train_df,
         x_col="file_path",
-        y_col="label",
+        y_col="label_numeric",
         batch_size=wandb.config["batch_size"],
         seed=42,
         shuffle=True,
@@ -79,7 +79,7 @@ def main(config_name):
     val_ds = datagen.flow_from_dataframe(
         val_df,
         x_col="file_path",
-        y_col="label",
+        y_col="label_numeric",
         batch_size=wandb.config["batch_size"],
         seed=42,
         shuffle=False,
@@ -91,7 +91,7 @@ def main(config_name):
     test_ds = datagen.flow_from_dataframe(
         test_df,
         x_col="file_path",
-        y_col="label",
+        y_col="label_numeric",
         batch_size=wandb.config["batch_size"],
         seed=42,
         shuffle=False,
@@ -157,7 +157,7 @@ def main(config_name):
                 "Confusion Matrix": wandb.plot.confusion_matrix(
                     y_true=y_true,
                     preds=y_pred,
-                    class_names=list(train_ds.class_indices.keys()),
+                    class_names=["no_burst", "burst"],
                 )
             }
         )
