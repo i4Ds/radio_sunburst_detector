@@ -16,6 +16,9 @@ parameters:
   learning_rate:
     min: 0.0001
     max: 0.1
+  dropout:
+    min: 0.0
+    max: 0.5
   last_layers_to_train: 
     min: 0
     max: 10

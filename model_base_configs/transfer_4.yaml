@@ -1,5 +1,6 @@
 input_shape: [256, 256, 3]
 l1: 0.00001
+dropout: 0.2
 weight_initialization: 'he_normal'
 learning_rate: 0.001
 last_layers_to_train: 2

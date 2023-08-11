@@ -47,6 +47,8 @@ def main(config_name):
     # Get model
     if wandb.config["model"] == "transfer":
         mb = TransferLearningModelBuilder(model_params=wandb.config)
+    else:
+        raise ValueError("Model not implemented.")
     
     # Create image generator
     ppf = lambda x: mb.preprocess_input(x, ewc=wandb.config['elim_wrong_channels'])

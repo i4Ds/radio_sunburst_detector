@@ -192,6 +192,7 @@ class TransferLearningModelBuilder:
         self.base_model_name = model_params.get("base_model_name", "EfficientNetV2B3")
         self.weight_initialization = model_params.get("weight_initialization", "he_normal")
         self.last_layers_to_train = model_params.get("last_layers_to_train", 0)
+        self.dropout = model_params.get("dropout", 0.0)
         self.model = None
         self.base_model = None
     
@@ -213,8 +214,12 @@ class TransferLearningModelBuilder:
         x = Flatten()(x)  # Flatten the output to connect with Dense layer
 
         # Classifier with L1 regularization
+        if self.dropout > 0.0:
+            x =  tf.keras.layers.Dropout(self.dropout)(x)
         output = Dense(
-            1, activation="sigmoid", kernel_regularizer=regularizers.l1(self.l1), kernel_initializer=self.weight_initialization
+            1, activation="sigmoid", 
+            kernel_regularizer=regularizers.l1(self.l1), 
+            kernel_initializer=self.weight_initialization
         )(x)
 
         self.model = Model(inputs=self.base_model.input, outputs=output)
