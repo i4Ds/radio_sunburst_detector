@@ -110,7 +110,10 @@ def main(config_name):
 
     # Evaluate model
     eval = model.evaluate(test_ds)
-    eval_metrics = dict(zip(model.metrics_names, eval))  # Python magic
+    # Create nice metrics names
+    test_metric_names = ["test_" + metric for metric in model.metrics_names]
+    # Create a dictionary of metrics
+    eval_metrics = dict(zip(test_metric_names, eval))  # Python magic
     wandb.log(eval_metrics)
 
     # Do more things if it's not a sweep.
