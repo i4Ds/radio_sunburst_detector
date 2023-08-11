@@ -53,8 +53,6 @@ def main(config_name):
         test_df.iloc[len(test_df) // 2 :],
     )
 
-    # Create label encoder for the labels
-
     # To excel for manual inspection
     train_df.to_excel("train_df.xlsx")
     val_df.to_excel("val_df.xlsx")
@@ -107,6 +105,9 @@ def main(config_name):
     )
 
     # Print out labels and their indices
+    print(train_ds.class_indices)
+    print(val_ds.class_indices)
+    print(test_ds.class_indices)
 
     # Log number of images in training and validation datasets
     # TODO: Log number of images in test dataset
@@ -129,7 +130,6 @@ def main(config_name):
             TqdmCallback(verbose=1),
         ],
     )
-
     # Evaluate model
     eval = model.evaluate(test_ds)
     # Create nice metrics names
@@ -168,7 +168,7 @@ def main(config_name):
                 "Confusion Matrix": wandb.plot.confusion_matrix(
                     y_true=y_true,
                     preds=y_pred,
-                    class_names=["no_burst", "burst"],
+                    class_names=list(test_ds.class_indices.keys()),
                 )
             }
         )
