@@ -68,7 +68,7 @@ def main(config_name):
     train_ds = datagen.flow_from_dataframe(
         train_df,
         x_col="file_path",
-        y_col="label_numeric",
+        y_col="label_keras",
         batch_size=wandb.config["batch_size"],
         seed=42,
         shuffle=True,
@@ -79,7 +79,7 @@ def main(config_name):
     val_ds = datagen.flow_from_dataframe(
         val_df,
         x_col="file_path",
-        y_col="label_numeric",
+        y_col="label_keras",
         batch_size=wandb.config["batch_size"],
         seed=42,
         shuffle=False,
@@ -91,7 +91,7 @@ def main(config_name):
     test_ds = datagen.flow_from_dataframe(
         test_df,
         x_col="file_path",
-        y_col="label_numeric",
+        y_col="label_keras",
         batch_size=wandb.config["batch_size"],
         seed=42,
         shuffle=False,
