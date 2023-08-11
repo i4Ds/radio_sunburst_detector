@@ -25,8 +25,8 @@ def get_datasets(
     # Shuffle the data, to make sure that all instruments appear in all datasets
     data_df = data_df.sample(frac=1, random_state=42).reset_index(drop=True)
 
-    # Define our own labels
-    data_df['label_numeric'] = np.where(data_df['label'] == 'no_burst', 0, 1)
+    # Sort so that no burst is 0 and burst is 1
+    data_df['label_keras'] = np.where(data_df['label'] == 'no_burst', '_no_burst', 'burst')
 
     if only_unique_time_periods:
         # Take only the first image from each time period
