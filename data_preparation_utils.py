@@ -28,6 +28,7 @@ def get_datasets(
     data_df = data_df.sample(frac=1, random_state=42).reset_index(drop=True)
 
     # Sort so that no burst is 0 and burst is 1
+    # This is because keras creates labeled after alphanumerics.
     data_df["label_keras"] = np.where(
         data_df["label"] == "no_burst", "_no_burst", "burst"
     )
