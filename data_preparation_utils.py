@@ -1,9 +1,6 @@
-import os
-
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from configure_dataframes import directory_to_dataframe
 
@@ -13,12 +10,8 @@ def get_datasets(
     data_df,
     instruments=[
         "australia_assa_02",
-        "australia_assa_62",
-        "india_ooty_01",
-        "glasgow_59",
         "swiss_landschlacht_01",
         "alaska_haarp_62",
-        "humain_59",
     ],
     train_size=0.9,
     test_size=0.1,
