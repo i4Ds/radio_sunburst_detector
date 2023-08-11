@@ -227,12 +227,11 @@ class TransferLearningModelBuilder:
         for layer in self.base_model.layers[: -self.last_layers_to_train]:
             layer.trainable = False
 
-        x = self.base_model.output
-        return x
+        return Model(inputs=input_layer, outputs=self.base_model.output)
 
     def build(self):
-        x = self.build_base_model()
-        x = Flatten()(x)  # Flatten the output to connect with Dense layer
+        base_model = self.build_base_model()
+        x = Flatten()(base_model.output)  # Flatten the output to connect with Dense layer
 
         # Classifier with L1 regularization
         if self.dropout > 0.0:
@@ -244,7 +243,7 @@ class TransferLearningModelBuilder:
             kernel_initializer=self.weight_initialization,
         )(x)
 
-        self.model = Model(inputs=self.base_model.input, outputs=output)
+        self.model = Model(inputs=base_model.input, outputs=output)
 
     def compile(self):
         self.model.compile(

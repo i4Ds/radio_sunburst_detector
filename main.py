@@ -121,6 +121,14 @@ def main(config_name):
     # Build and train the model
     mb.build()
     model = mb.compile()
+
+    # Print out model summary
+    if not wandb.run.sweep_id:
+        print("Model summary:")
+        print("-" * 30)
+        print(mb.model.summary())
+
+    # Train the model
     _ = model.fit(
         train_ds,
         validation_data=val_ds,
