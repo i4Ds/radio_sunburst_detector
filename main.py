@@ -42,7 +42,7 @@ def main(config_name):
     train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, burst_frac=wandb.config["burst_frac"])
                                             
     # Update datasets
-    val_df, test_df = test_df.iloc[:len(train_df)//2], test_df.iloc[len(train_df)//2:]
+    val_df, test_df = test_df.iloc[:len(test_df)//2], test_df.iloc[len(test_df)//2:]
 
     # Get model
     if wandb.config["model"] == "transfer":
