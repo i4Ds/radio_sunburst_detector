@@ -1,6 +1,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+
+from configure_dataframes import directory_to_dataframe
+
+from configure_dataframes import directory_to_dataframe
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 from configure_dataframes import directory_to_dataframe
@@ -65,7 +69,13 @@ def get_datasets(
     assert train_df.start_time.max() < test_df.start_time.min()
     # Assert that the dataframes are correct
     assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
+    
+    # Final asserts
+    assert train_df.start_time.max() < test_df.start_time.min()
+    # Assert that the dataframes are correct
+    assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
 
+    return train_df, test_df
     return train_df, test_df
 
 def update_class_balance_per_instrument(df, burst_frac):
@@ -110,6 +120,11 @@ def print_class_balance(df, dataset_name):
 
 if __name__ == "__main__":
     data_df = directory_to_dataframe()
+    # Create datasets
+    train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, burst_frac=0.5, sort_by_time=True, only_unique_time_periods=True)
+                                            
+    # Update datasets
+    val_df, test_df = test_df.iloc[:len(test_df)//2], test_df.iloc[len(test_df)//2:]
     # Create datasets
     train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, burst_frac=0.5, sort_by_time=True, only_unique_time_periods=True)
                                             
@@ -161,6 +176,9 @@ if __name__ == "__main__":
 
     class_names = list(train_ds.class_indices.keys())
     for ds, ds_name, df in zip(
+        [train_ds, val_ds, test_ds],
+        ["train", "val", "test"],
+        [train_df, val_df, test_df],
         [train_ds, val_ds, test_ds],
         ["train", "val", "test"],
         [train_df, val_df, test_df],
