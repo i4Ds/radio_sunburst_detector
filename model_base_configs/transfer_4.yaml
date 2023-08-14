@@ -10,6 +10,9 @@ model: transfer
 base_model_name: EfficientNetV2L
 batch_size: 128
 burst_frac: 0.5
+=======
+burst_frac: 0.1
+>>>>>>> e964e87 (Fixed main script.)
 instrument_to_use: [
     "australia_assa_02",
     "swiss_landschlacht_01",
