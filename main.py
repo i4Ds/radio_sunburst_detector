@@ -13,7 +13,6 @@ from configure_dataframes import directory_to_dataframe
 from data_preparation_utils import get_datasets
 from metric_utils import log_wandb_print_class_report, plot_roc_curve
 from modelbuilder import ModelBuilder, TransferLearningModelBuilder
-from modelbuilder import ModelBuilder, TransferLearningModelBuilder
 from train_utils import load_config
 
 
@@ -33,7 +32,6 @@ def main(config_name):
 
     # Load dataframes
     data_df = directory_to_dataframe()
-
 
     # Filter if you want
     if "instrument_to_use" in wandb.config:
@@ -60,16 +58,9 @@ def main(config_name):
     val_df.to_excel("val_df.xlsx")
     test_df.to_excel("test_df.xlsx")
 
-    train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3)
-                                            
-    # Update datasets
-    val_df, test_df = train_df.iloc[:len(train_df)//2], train_df.iloc[len(train_df)//2:]
-
-
     # Get model
     if wandb.config["model"] == "transfer":
         mb = TransferLearningModelBuilder(model_params=wandb.config)
-
     else:
         raise ValueError("Model not implemented.")
 
@@ -180,7 +171,7 @@ def main(config_name):
         # Plot ROC curve
         fig = plot_roc_curve(y_true, y_pred_proba)
         wandb.log({"ROC Curve": [wandb.Image(fig)]})
-        
+
         # Plot confusion matrix
         wandb.log(
             {
@@ -195,9 +186,8 @@ def main(config_name):
         # Upload classification report to wandb
         log_wandb_print_class_report(
             y_true, y_pred, target_names=list(train_ds.class_indices.keys())
-            )
-        
-      
+        )
+
 
 if __name__ == "__main__":
     """

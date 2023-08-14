@@ -14,7 +14,5 @@ burst_frac: 0.5
 burst_frac: 0.1
 
 instrument_to_use: [
-    "australia_assa_02",
-    "swiss_landschlacht_01",
-    "alaska_haarp_62",
+    "australia_assa_02"
 ]
