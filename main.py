@@ -35,8 +35,7 @@ def main(config_name):
     # Load dataframes
     data_df = directory_to_dataframe()
 
-=======
->>>>>>> e964e87 (Fixed main script.)
+
     # Filter if you want
     if "instrument_to_use" in wandb.config:
         data_df = data_df[data_df.instrument.isin(wandb.config["instrument_to_use"])]
@@ -61,17 +60,17 @@ def main(config_name):
     train_df.to_excel("train_df.xlsx")
     val_df.to_excel("val_df.xlsx")
     test_df.to_excel("test_df.xlsx")
-=======
+
     _, _, train_df, test_df  = get_datasets(data_df, train_size=0.7, test_size=0.3, return_dfs=True)
                                             
     # Update datasets
     val_df, test_df = train_df.iloc[:len(train_df)//2], train_df.iloc[len(train_df)//2:]
->>>>>>> e964e87 (Fixed main script.)
+
 
     # Get model
     if wandb.config["model"] == "transfer":
         mb = TransferLearningModelBuilder(model_params=wandb.config)
-<<<<<<< HEAD
+
     else:
         raise ValueError("Model not implemented.")
 
@@ -114,7 +113,6 @@ def main(config_name):
         target_size=(256, 256),
         color_mode="grayscale",
     )
-<<<<<<< HEAD
 
     # Print out labels and their indices
     print("Labels and their indices:")

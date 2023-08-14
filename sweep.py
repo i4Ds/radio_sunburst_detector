@@ -52,7 +52,7 @@ def main(config_name: str, batch_size: int) -> None:
         data_df = data_df[data_df.instrument.isin(wandb.config["instrument_to_use"])]
 
     # Create datasets
-<<<<<<< HEAD
+
     train_df, test_df = get_datasets(
         data_df,
         train_size=0.7,
