@@ -48,14 +48,16 @@ def main(config_name: str, batch_size: int) -> None:
     data_df = directory_to_dataframe()
 
     # Filter DF, if you want
-    if 'instrument_to_use' in wandb.config:
-        data_df = data_df[data_df.instrument.isin(wandb.config['instrument_to_use'])]
+    if "instrument_to_use" in wandb.config:
+        data_df = data_df[data_df.instrument.isin(wandb.config["instrument_to_use"])]
 
     # Create datasets
     train_df, test_df = get_datasets(
-        data_df, 
+        data_df,
         train_size=0.7,
-        sort_by_time=True, only_unique_time_periods=True, burst_frac=wandb.config['burst_frac']
+        sort_by_time=True,
+        only_unique_time_periods=True,
+        burst_frac=wandb.config["burst_frac"],
     )
 
     # Build and train the model
@@ -77,9 +79,11 @@ def main(config_name: str, batch_size: int) -> None:
     _s = TimeSeriesSplit(n_splits=n_splits)
     X = train_df["file_path"].values
     y = train_df["label"].values
-    #pp_f = lambda x: TransferLearningModelBuilder.preprocess_input(x, ewc=wandb.config['elim_wrong_channels'])
-    #datagen = ImageDataGenerator(preprocessing_function=pp_f)
-    datagen = ImageDataGenerator(rescale=1.0 / 255.0)
+    pp_f = lambda x: TransferLearningModelBuilder.preprocess_input(
+        x, ewc=wandb.config["elim_wrong_channels"]
+    )
+    datagen = ImageDataGenerator(preprocessing_function=pp_f)
+
     evals = []
 
     for fold, (train_index, val_index) in enumerate(_s.split(X, y)):
@@ -89,9 +93,10 @@ def main(config_name: str, batch_size: int) -> None:
 
         train_data = train_df.iloc[train_index]
         val_data = train_df.iloc[val_index]
-        val_data, test_data = val_data.iloc[: len(val_data) // 2], val_data.iloc[
-            len(val_data) // 2 :
-        ]
+        val_data, test_data = (
+            val_data.iloc[: len(val_data) // 2],
+            val_data.iloc[len(val_data) // 2 :],
+        )
 
         # Print out class balance
         print("Class balance in training set:")
@@ -100,7 +105,6 @@ def main(config_name: str, batch_size: int) -> None:
         print(val_data.label.value_counts())
         print("Class balance in test set:")
         print(test_data.label.value_counts())
-
 
         val_start = val_data.start_time.min()
         val_end = val_data.start_time.max()

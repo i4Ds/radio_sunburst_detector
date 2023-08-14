@@ -34,17 +34,17 @@ def get_features(img_path, model, ewc=False):
     return features.squeeze()
 
 
-def scale_and_reduce(features_list, dim_reducer='tsne'):
+def scale_and_reduce(features_list, dim_reducer="tsne"):
     features_list_arr = np.array(features_list)
     num_samples = features_list_arr.shape[0]
     all_features_2d = features_list_arr.reshape(num_samples, -1)
 
     features_std = StandardScaler().fit_transform(all_features_2d)
-    if dim_reducer == 'tsne':
+    if dim_reducer == "tsne":
         reducer = TSNE(n_components=2, random_state=0)
-    elif dim_reducer == 'umap':
+    elif dim_reducer == "umap":
         reducer = umap.UMAP(n_components=2, random_state=0)
-    elif dim_reducer == 'pca':
+    elif dim_reducer == "pca":
         reducer = PCA(n_components=2, random_state=0)
     else:
         raise ValueError(f"Unknown dim_reducer: {dim_reducer}")
@@ -53,7 +53,9 @@ def scale_and_reduce(features_list, dim_reducer='tsne'):
 
 def plot_features(low_dim_features, df):
     fig, ax = plt.subplots(figsize=(8, 6))
-    ax.set_title("2D Visualization of <reducer> Features with Burst Information", fontsize=18)
+    ax.set_title(
+        "2D Visualization of <reducer> Features with Burst Information", fontsize=18
+    )
     ax.set_xlabel("Feature 1", fontsize=14)
     ax.set_ylabel("Feature 2", fontsize=14)
 
@@ -116,4 +118,3 @@ def display_misclassified_images(df, num_images=9):
 
     plt.tight_layout()
     plt.show()
-
