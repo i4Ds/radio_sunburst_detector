@@ -26,7 +26,6 @@ def main(config_name):
     config = load_config(os.path.join("model_base_configs", config_name + ".yaml"))
     wandb.init(
         project="radio_sunburst_detection_main",
-        project="radio_sunburst_detection_main",
         config=config,
         entity="i4ds_radio_sunburst_detection",
     )
@@ -181,20 +180,7 @@ def main(config_name):
         # Plot ROC curve
         fig = plot_roc_curve(y_true, y_pred_proba)
         wandb.log({"ROC Curve": [wandb.Image(fig)]})
-        # Plot ROC curve
-        fig = plot_roc_curve(y_true, y_pred_proba)
-        wandb.log({"ROC Curve": [wandb.Image(fig)]})
-
-        # Plot confusion matrix
-        wandb.log(
-            {
-                "Confusion Matrix": wandb.plot.confusion_matrix(
-                    y_true=y_true,
-                    preds=y_pred,
-                    class_names=list(test_ds.class_indices.keys()),
-                )
-            }
-        )
+        
         # Plot confusion matrix
         wandb.log(
             {
@@ -209,13 +195,7 @@ def main(config_name):
         # Upload classification report to wandb
         log_wandb_print_class_report(
             y_true, y_pred, target_names=list(train_ds.class_indices.keys())
-        )
-        # Upload classification report to wandb
-        log_wandb_print_class_report(
-            y_true, y_pred, target_names=list(train_ds.class_indices.keys())
-        )
-
-
+      
 
 if __name__ == "__main__":
     """
