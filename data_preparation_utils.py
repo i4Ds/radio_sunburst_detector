@@ -74,13 +74,8 @@ def get_datasets(
     # Assert that the dataframes are correct
     assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
     
-    # Final asserts
-    assert train_df.start_time.max() < test_df.start_time.min()
-    # Assert that the dataframes are correct
-    assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
+    return train_df, test_df
 
-    return train_df, test_df
-    return train_df, test_df
 
 
 def update_class_balance_per_instrument(df, burst_frac):
