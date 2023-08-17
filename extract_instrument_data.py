@@ -34,7 +34,7 @@ def main():
     # Enter the instrument name (e.g., australia_assa_02)
     instrument_name = "australia_assa_02"
     # Enter the folder name where the images are kept (1, 2, 3, 4, 5, 6, or no_burst)
-    folder_name = "6"
+    folder_name = "no_burst"
     move_images(instrument_name, folder_name)
 
 

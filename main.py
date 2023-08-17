@@ -40,8 +40,8 @@ def main(config_name):
     # Create datasets
     train_df, test_df = get_datasets(
         data_df,
-        train_size=0.7,
-        test_size=0.3,
+        train_size=0.9,
+        test_size=0.1,
         burst_frac=wandb.config["burst_frac"],
         sort_by_time=True,
         only_unique_time_periods=True,
