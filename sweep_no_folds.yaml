@@ -8,7 +8,7 @@ project: radio_sunburst_detection
 entity: i4ds_radio_sunburst_detection
 metric:
   goal: maximize
-  name: test_f1_score
+  name: test_recall
 parameters:
   l1:
     min: 0.00001
