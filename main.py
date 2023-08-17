@@ -163,6 +163,7 @@ def main(config_name):
             metadata=dict(config_name=config_name),
         )
         artifact.add_file(os.path.join(wandb.run.dir, "model.keras"))
+        wandb.log_artifact(artifact)
 
         # Calculate other things
         y_pred_proba = model.predict(test_ds).flatten()
