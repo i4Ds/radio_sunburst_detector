@@ -11,10 +11,10 @@ model_params:
   num_dense_layers: 2
   neurons_dense_layer: 64
 
-epochs: 30
-burst_frac: 0.5
+model: autoencoder
+batch_size: 128
+epochs: 10
+burst_frac: 0.1
 instrument_to_use: [
-    "australia_assa_02",
-    "swiss_landschlacht_01",
-    "alaska_haarp_62",
+    "australia_assa_02"
 ]
