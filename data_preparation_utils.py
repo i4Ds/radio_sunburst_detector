@@ -70,7 +70,8 @@ def get_datasets(
     print_class_balance(test_df, "test")
 
     # Final asserts
-    assert train_df.start_time.max() < test_df.start_time.min()
+    if sort_by_time:
+        assert train_df.start_time.max() < test_df.start_time.min()
     # Assert that the dataframes are correct
     assert np.intersect1d(train_df["file_path"], test_df["file_path"]).size == 0
     
