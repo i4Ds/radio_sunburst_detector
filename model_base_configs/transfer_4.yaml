@@ -1,8 +1,8 @@
 input_shape: [256, 256, 1]
-l1: 0.001696829726988035
-dropout: 0.4254767190139672
+l1: 0.00985604785523802
+dropout: 0.15886306060207622
 weight_initialization: 'he_normal'
-learning_rate: 0.0029465617656424083
+learning_rate: 0.0685625334547779
 last_layers_to_train: 3
 elim_wrong_channels: False
 epochs: 30
