@@ -10,6 +10,8 @@ model: transfer
 base_model_name: EfficientNetV2L
 batch_size: 128
 burst_frac: 0.1
+sort_by_time: False
+train_size: 0.7
 instrument_to_use: [
     "australia_assa_02"
 ]

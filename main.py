@@ -7,6 +7,7 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tqdm.keras import TqdmCallback
 from wandb.keras import WandbMetricsLogger
+from keras.utils import set_random_seed
 
 import wandb
 from configure_dataframes import directory_to_dataframe
@@ -20,6 +21,9 @@ def main(config_name):
     # Fix the random generator seeds for better reproducibility
     tf.random.set_seed(67)
     np.random.seed(67)
+    # Set keras seed
+    set_random_seed(67)
+
 
     # Send config to wandb
     config = load_config(os.path.join("model_base_configs", config_name + ".yaml"))
@@ -40,10 +44,10 @@ def main(config_name):
     # Create datasets
     train_df, test_df = get_datasets(
         data_df,
-        train_size=0.7,
-        test_size=0.3,
+        train_size=wandb.config["train_size"],
+        test_size=1-wandb.config["train_size"],
         burst_frac=wandb.config["burst_frac"],
-        sort_by_time=False,
+        sort_by_time=wandb.config["sort_by_time"],
         only_unique_time_periods=True,
     )
 
