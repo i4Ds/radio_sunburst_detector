@@ -40,8 +40,8 @@ def main(config_name):
     # Create datasets
     train_df, test_df = get_datasets(
         data_df,
-        train_size=0.7,
-        test_size=0.3,
+        train_size=0.9,
+        test_size=0.1,
         burst_frac=wandb.config["burst_frac"],
         sort_by_time=True,
         only_unique_time_periods=True,
@@ -61,12 +61,16 @@ def main(config_name):
     # Get model
     if wandb.config["model"] == "transfer":
         mb = TransferLearningModelBuilder(model_params=wandb.config)
+        # Create image generator
+        ppf = lambda x: mb.preprocess_input(x, ewc=wandb.config["elim_wrong_channels"])
+        datagen = ImageDataGenerator(preprocessing_function=ppf)
+    elif wandb.config["model"] == "autoencoder":
+        mb = ModelBuilder(model_params=wandb.config['model_params'])
+        datagen = ImageDataGenerator()
     else:
         raise ValueError("Model not implemented.")
 
-    # Create image generator
-    ppf = lambda x: mb.preprocess_input(x, ewc=wandb.config["elim_wrong_channels"])
-    datagen = ImageDataGenerator(preprocessing_function=ppf)
+
 
     # Create datasets
     train_ds = datagen.flow_from_dataframe(
@@ -115,7 +119,7 @@ def main(config_name):
     # TODO: Log number of images in test dataset
 
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
-        monitor="val_f1_score", patience=10, verbose=1
+        monitor="val_recall", patience=4, verbose=1
     )  # or val_loss, experiment
 
     # Build and train the model

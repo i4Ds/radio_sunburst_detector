@@ -27,4 +27,4 @@ command:
   - ${interpreter}
   - ${program}
   - "--config_name"
-  - transfer_4 #Insert your base model here
+  - t_1 #Insert your base model here

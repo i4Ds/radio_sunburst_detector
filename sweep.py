@@ -52,6 +52,7 @@ def main(config_name: str, batch_size: int) -> None:
         data_df = data_df[data_df.instrument.isin(wandb.config["instrument_to_use"])]
 
     # Create datasets
+
     train_df, test_df = get_datasets(
         data_df,
         train_size=0.7,
@@ -61,7 +62,8 @@ def main(config_name: str, batch_size: int) -> None:
     )
 
     # Build and train the model
-    mb = TransferLearningModelBuilder(model_params=wandb.config)
+    mb = ModelBuilder(model_params=wandb.config["model_params"])
+    #mb = TransferLearningModelBuilder(model_params=wandb.config)
 
     early_stopping_callback = tf.keras.callbacks.EarlyStopping(
         monitor="val_f1_score",
