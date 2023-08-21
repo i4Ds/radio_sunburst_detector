@@ -15,9 +15,7 @@ from modelbuilder import TransferLearningModelBuilder
 def get_datasets(
     data_df,
     instruments=[
-        "australia_assa_02",
-        "swiss_landschlacht_01",
-        "alaska_haarp_62",
+        "australia_assa_02"
     ],
     train_size=0.9,
     test_size=0.1,
@@ -190,10 +188,7 @@ if __name__ == "__main__":
     for ds, ds_name, df in zip(
         [train_ds, val_ds, test_ds],
         ["train", "val", "test"],
-        [train_df, val_df, test_df],
-        [train_ds, val_ds, test_ds],
-        ["train", "val", "test"],
-        [train_df, val_df, test_df],
+        [train_df, val_df, test_df]
     ):
         # Plot some images
         images, labels = next(
