@@ -20,6 +20,9 @@ def main(config_name):
     # Fix the random generator seeds for better reproducibility
     tf.random.set_seed(67)
     np.random.seed(67)
+    # Set keras seed
+    set_random_seed(67)
+
 
     # Send config to wandb
     config = load_config(os.path.join("model_base_configs", config_name + ".yaml"))
@@ -40,10 +43,10 @@ def main(config_name):
     # Create datasets
     train_df, test_df = get_datasets(
         data_df,
-        train_size=0.9,
-        test_size=0.1,
+        train_size=0.7,
+        test_size=0.3,
         burst_frac=wandb.config["burst_frac"],
-        sort_by_time=True,
+        sort_by_time=wandb.config["sort_by_time"],
         only_unique_time_periods=True,
     )
 
@@ -163,6 +166,7 @@ def main(config_name):
             metadata=dict(config_name=config_name),
         )
         artifact.add_file(os.path.join(wandb.run.dir, "model.keras"))
+        wandb.log_artifact(artifact)
 
         # Calculate other things
         y_pred_proba = model.predict(test_ds).flatten()
